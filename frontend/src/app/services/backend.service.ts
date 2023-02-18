@@ -6,10 +6,14 @@ import { HttpClient } from '@angular/common/http';
 })
 export class BackendService {
 
-  constructor(private http:HttpClient) { }
-  URL:string="http://localhost:4000"
+  constructor(private http: HttpClient) { }
+  URL: string = "http://localhost:4000"
 
-  Login(cuerpo:any){
+  Login(cuerpo: any) {
     return this.http.post(`${this.URL}/login`, cuerpo);
+  }
+
+  Registro(cuerpo: any) {
+    return this.http.post(`${this.URL}/registro`, cuerpo);
   }
 }
