@@ -1,0 +1,27 @@
+<div class="position-absolute top-50 start-50 translate-middle" style="background-color:    #3c464c   ;">
+    <div class="text-center">
+        <p class="fs-1" style="color:  white  ;">
+            <b>Login</b>
+        </p>
+        <img src="https://merivis.org/wp-content/uploads/2018/02/Amazon-Logo-Transparent-PNG.png" class="img-fluid" width="15%" height="15%">
+    </div>
+    <br>
+    <div class="mx-auto" style="width: 60%;">
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label" style="color: white">Usuario</label>
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="your user" [(ngModel)]="this.cuerpo.Usuario" [ngModelOptions]="{standalone: true}">
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label" style="color: white;">Contraseña</label>
+            <input type="password" class="form-control" id="exampleFormControlInput1" placeholder="your password" [(ngModel)]="this.cuerpo.Password" [ngModelOptions]="{standalone: true}">
+        </div>
+        <div class="d-grid gap-2">
+            <button type="submit" class="bt btn-primary btn-lg" style="background-color:#fc9c1c ;">Submit</button>
+        </div>
+        <br>
+        <div class="text-center">
+            <p style="color: white;">No tienes cuenta? <a href="">Registrate</a></p>
+        </div>
+        <br>
+    </div>
+</div>
