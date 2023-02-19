@@ -1,0 +1,10 @@
+.vl {
+    border-left: 6px solid green;
+    height: 500px;
+}
+
+.frameFoto{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -1,4 +1,4 @@
-<app-barra-superior></app-barra-superior>
+<app-menu></app-menu>
 <div
   style="
     background-color: #3c464c;
@@ -11,9 +11,8 @@
 >
   <div class="text-center">
     <p class="fs-1" style="color: white">
-      <b>Registro</b>
+      <b>Editar Perfil</b>
     </p>
-    <img src="../assets/logo.png" class="img-fluid" width="20%" height="20%" />
   </div>
   <br />
   <div class="row">
@@ -51,41 +50,24 @@
             [ngModelOptions]="{ standalone: true }"
           />
         </div>
-        <div class="mb-3">
-          <label
-            for="exampleFormControlTextarea1"
-            class="form-label"
-            style="color: white"
-            >Contraseña</label
-          >
-          <input
-            type="password"
-            class="form-control"
-            id="exampleFormControlInput1"
-            placeholder="your password"
-            [(ngModel)]="this.cuerpo.Password"
-            [ngModelOptions]="{ standalone: true }"
-          />
+        <div><h3 style="color: white">Tu foto</h3></div>
+        <div class="snapshot frameFoto">
+          <img [src]="this.cuerpo.Foto" [height]="250" [width]="300" />
         </div>
-        <div class="mb-3">
-          <label
-            for="exampleFormControlTextarea1"
-            class="form-label"
-            style="color: white"
-            >Confirmar contraseña</label
+        <div class="snapshot frameFoto">
+          <button
+            type="submit"
+            class="bt btn-primary btn-lg"
+            style="background-color: #242c3c"
+            (click)="cFoto()"
           >
-          <input
-            type="password"
-            class="form-control"
-            id="exampleFormControlInput1"
-            placeholder="your password"
-            [(ngModel)]="this.confirmPass"
-            [ngModelOptions]="{ standalone: true }"
-          />
+            Cambiar fotografía
+          </button>
         </div>
       </div>
     </div>
-    <div class="col">
+
+    <div class="col" *ngIf="this.cambiarFoto">
       <div class="mb-3" style="width: 95%">
         <label
           for="exampleFormControlTextarea1"
@@ -136,12 +118,6 @@
         </div>
       </div>
     </div>
-    <div class="col">
-      <div class="snapshot" *ngIf="this.existsFoto">
-        <h2>Tu foto</h2>
-        <img [src]="this.cuerpo.Foto" [height]="250" [width]="300" />
-      </div>
-    </div>
   </div>
   <div class="row">
     <div class="col"></div>
@@ -150,7 +126,7 @@
         <button
           type="submit"
           class="bt btn-primary btn-lg"
-          style="background-color: #fc9c1c"
+          style="background-color: #fc9c1c; margin: 30px"
           (click)="Registrar()"
         >
           Submit
@@ -159,10 +135,4 @@
     </div>
     <div class="col"></div>
   </div>
-  <br />
-  <div class="text-center">
-    <p style="color: white">Ya tienes cuenta? <a href="login">Login</a></p>
-  </div>
-
-  <br />
 </div>
