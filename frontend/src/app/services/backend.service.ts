@@ -16,4 +16,8 @@ export class BackendService {
   Registro(cuerpo: any) {
     return this.http.post(`${this.URL}/registro`, cuerpo);
   }
+
+  getInfo(usuario: any) {
+    return this.http.get(`${this.URL}/info/${usuario}`);
+  }
 }
