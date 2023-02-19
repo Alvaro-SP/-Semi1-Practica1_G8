@@ -25,13 +25,15 @@ export class LoginComponent implements OnInit {
       return;
     }
     this.backend.Login(this.cuerpo).subscribe(
+      
       res => {
         const resp = JSON.parse(JSON.stringify(res))
+        console.log(resp)
         if (resp.Res) {
           sessionStorage.setItem("usuario", this.cuerpo.Usuario)
           this.cuerpo.Usuario = ""
           this.cuerpo.Password = ""
-          //this.router.navigate(['inicio'])
+          this.router.navigate(['inicio'])
         } else {
           alert("Usuario o Contraseña Incorrecta")
           this.cuerpo.Usuario = ""

@@ -24,4 +24,8 @@ export class BackendService {
   getFotos(usuario: any) {
     return this.http.get(`${this.URL}/verFotos/${usuario}`);
   }
+
+  Editar(cuerpo: any) {
+    return this.http.post(`${this.URL}/actualizaInfo`, cuerpo);
+  }
 }

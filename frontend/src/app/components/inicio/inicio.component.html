@@ -1,30 +1,63 @@
 <app-menu></app-menu>
 
-<div style="background-color:#3c464c; margin: auto; width: 85%; height: auto; margin-top: 5%; margin-bottom: 5%;">
-    <br>
-    <br>
-    <div class="row">
-        <div class="col">
-            <div class="mx-auto" style="width: 80%;">
-                <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label" style="color: white">Usuario</label>
+<div
+  style="
+    background-color: #3c464c;
+    margin: auto;
+    width: 85%;
+    height: auto;
+    margin-top: 5%;
+    margin-bottom: 5%;
+  "
+>
+  <br />
+  <br />
+  <div class="row">
+    <div class="col">
+      <div class="mx-auto" style="width: 80%">
+        <div class="mb-3">
+          <label
+            for="exampleFormControlInput1"
+            class="form-label"
+            style="color: white"
+            >Usuario</label
+          >
 
-                    <input type="text" class="form-control" id="exampleFormControlInput1" [(ngModel)]="this.cuerpo.Usuario" [ngModelOptions]="{standalone: true}" [disabled]="true">
-                </div>
-                <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label" style="color: white">Nombre
-                        Completo</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" [(ngModel)]="this.cuerpo.Nombre" [ngModelOptions]="{standalone: true}" [disabled]="true">
-                </div>
-            </div>
+          <input
+            type="text"
+            class="form-control"
+            id="exampleFormControlInput1"
+            [(ngModel)]="this.cuerpo.Usuario"
+            [ngModelOptions]="{ standalone: true }"
+            [disabled]="true"
+          />
         </div>
-        <div class="col">
-            <div class="snapshot">
-                <h4 style="color: white;">Tu foto</h4>
-                <img [src]="this.cuerpo.Foto" [height]="300" [width]="300" />
-            </div>
+        <div class="mb-3">
+          <label
+            for="exampleFormControlInput1"
+            class="form-label"
+            style="color: white"
+            >Nombre Completo</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            id="exampleFormControlInput1"
+            [(ngModel)]="this.cuerpo.Nombre"
+            [ngModelOptions]="{ standalone: true }"
+            [disabled]="true"
+          />
         </div>
-        <br>
+      </div>
     </div>
-    <br>
-    <br>
+    <div class="col">
+      <div class="snapshot">
+        <h4 style="color: white">Tu foto</h4>
+        <img [src]="this.cuerpo.Foto" [height]="300" [width]="300" />
+      </div>
+    </div>
+    <br />
+  </div>
+  <br />
+  <br />
+</div>
