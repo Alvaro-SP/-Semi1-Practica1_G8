@@ -9,6 +9,8 @@ import { RegistroComponent } from './components/registro/registro.component';
 import { WebcamModule } from 'ngx-webcam';
 import { InicioComponent } from './components/inicio/inicio.component';
 import { MenuComponent } from './components/menu/menu.component';
+import { VerFotosComponent } from './components/ver-fotos/ver-fotos.component';
+import { AlbumComponent } from './components/album/album.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +18,9 @@ import { MenuComponent } from './components/menu/menu.component';
     LoginComponent,
     RegistroComponent,
     InicioComponent,
-    MenuComponent
+    MenuComponent,
+    VerFotosComponent,
+    AlbumComponent
   ],
   imports: [
     BrowserModule,
