@@ -20,4 +20,8 @@ export class BackendService {
   getInfo(usuario: any) {
     return this.http.get(`${this.URL}/info/${usuario}`);
   }
+
+  getFotos(usuario: any) {
+    return this.http.get(`${this.URL}/verFotos/${usuario}`);
+  }
 }
