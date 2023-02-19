@@ -7,12 +7,16 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegistroComponent } from './components/registro/registro.component';
 import { WebcamModule } from 'ngx-webcam';
+import { InicioComponent } from './components/inicio/inicio.component';
+import { MenuComponent } from './components/menu/menu.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    RegistroComponent
+    RegistroComponent,
+    InicioComponent,
+    MenuComponent
   ],
   imports: [
     BrowserModule,
