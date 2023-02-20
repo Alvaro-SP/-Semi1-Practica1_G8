@@ -18,7 +18,7 @@ var db *sql.DB
 // ! funcion para obtener conexion de la base de datos
 func obtenerBaseDeDatos() (db *sql.DB, e error) {
 	// * open the db connection.
-	usuario := "myuser"
+	usuario := "root"
 	pass := "2412"
 	host := "tcp(localhost:3306)" // can the 127.0.0.1 ip too instead of db
 	nombreBaseDeDatos := "mydb"
