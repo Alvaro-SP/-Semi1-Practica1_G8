@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	// "io/ioutil"
 	"net/http"
-	"strconv"
-	"strings"
-	"time"
+	// "strconv"
+	// "strings"
+	// "time"
 	_ "github.com/go-sql-driver/mysql" // La librería que nos permite conectar a MySQL
 	"github.com/gorilla/mux"
 )
@@ -20,7 +20,7 @@ func obtenerBaseDeDatos() (db *sql.DB, e error) {
 	// * open the db connection.
 	usuario := "myuser"
 	pass := "2412"
-	host := "tcp(db:3306)" // can the 127.0.0.1 ip too instead of db
+	host := "tcp(localhost:3306)" // can the 127.0.0.1 ip too instead of db
 	nombreBaseDeDatos := "mydb"
 	// Debe tener la forma usuario:contraseña@host/nombreBaseDeDatos
 	dbtemp, err := sql.Open("mysql", fmt.Sprintf("%s:%s@%s/%s", usuario, pass, host, nombreBaseDeDatos))
