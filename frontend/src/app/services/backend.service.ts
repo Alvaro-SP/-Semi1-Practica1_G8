@@ -26,6 +26,10 @@ export class BackendService {
   }
 
   Editar(cuerpo: any) {
-    return this.http.post(`${this.URL}/actualizaInfo`, cuerpo);
+    return this.http.put(`${this.URL}/actualizaInfo`, cuerpo);
+  }
+
+  getAlbums() {
+    return this.http.get(`${this.URL}/getAlbums`);
   }
 }
