@@ -7,6 +7,7 @@ import { VerFotosComponent } from './components/ver-fotos/ver-fotos.component';
 import { EditarPerfilComponent } from './components/editar-perfil/editar-perfil.component';
 import { SubirFotoComponent } from './components/subir-foto/subir-foto.component';
 import { CrearAlbumComponent } from './components/crear-album/crear-album.component';
+import { EditarAlbumsComponent } from './components/editar-albums/editar-albums.component';
 
 const routes: Routes = [
   {
@@ -41,6 +42,9 @@ const routes: Routes = [
   {
     path: 'crearAlbum',
     component: CrearAlbumComponent
+  },{
+    path: 'editarAlbums',
+    component: EditarAlbumsComponent
   }
 ];
 

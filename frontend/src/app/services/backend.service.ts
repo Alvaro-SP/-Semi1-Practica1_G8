@@ -40,4 +40,12 @@ export class BackendService {
   subirFoto(cuerpo: any) {
     return this.http.put(`${this.URL}/subirFoto`, cuerpo);
   }
+
+  modificaAlbum(cuerpo: any) {
+    return this.http.put(`${this.URL}/modificaAlbum`, cuerpo);
+  }
+
+  eliminaAlbum(id: any) {
+    return this.http.delete(`${this.URL}/eliminaAlbum/${id}`);
+  }
 }

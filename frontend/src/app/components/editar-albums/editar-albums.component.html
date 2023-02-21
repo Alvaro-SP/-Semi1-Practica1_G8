@@ -1,0 +1,112 @@
+<app-menu></app-menu>
+<div class="divSubir">
+  <div class="text-center">
+    <p class="fs-1" style="color: white">
+      <b>Editar Albums</b>
+    </p>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col"></div>
+    <div class="col">
+      <div class="d-grid gap-2">
+        <label
+          for="exampleFormControlInput1"
+          class="form-label"
+          style="color: white"
+          >Seleccione el album a editar</label
+        >
+
+        <select
+          class="form-select custom-select select-selected"
+          aria-label="Default select example"
+          [(ngModel)]="this.cuerpo.Id"
+        >
+          <option class="select-items" selected value=""></option>
+          <ng-container *ngFor="let album of jsalbums">
+            <option class="select-items" value="{{ album.Id }}">
+              {{ album.Nombre }}
+            </option>
+          </ng-container>
+        </select>
+      </div>
+    </div>
+    <div class="col"></div>
+  </div>
+
+  <div class="row">
+    <div class="col"></div>
+    <div
+      class="col"
+      *ngIf="
+        this.cuerpo.Id != '' ||
+        this.cuerpo.Id != undefined ||
+        this.cuerpo.Id != null
+      "
+    >
+      <label
+        for="exampleFormControlInput1"
+        class="form-label"
+        style="color: white"
+        >Nuevo nombre</label
+      >
+      <input
+        type="text"
+        class="form-control"
+        id="exampleFormControlInput1"
+        placeholder="nombre album"
+        [(ngModel)]="this.cuerpo.Album"
+        [ngModelOptions]="{ standalone: true }"
+      />
+    </div>
+    <div class="col"></div>
+  </div>
+
+  <div class="row">
+    <div class="col"></div>
+    <div class="col">
+      <div class="d-grid gap-2">
+        <button
+          type="submit"
+          class="bt btn-primary btn-lg"
+          style="background-color: #fc9c1c; margin: 30px"
+          (click)="subir()"
+        >
+          Editar
+        </button>
+      </div>
+    </div>
+    <div class="col">
+      <div class="d-grid gap-2">
+        <button
+          type="submit"
+          class="bt btn-danger btn-lg"
+          style="margin: 30px"
+          (click)="elimina()"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+    <div class="col"></div>
+  </div>
+
+  <div class="row" *ngIf="!this.habilitarCreacion">
+    <button
+      type="button"
+      class="btn btn-link"
+      (click)="habilitaCreacion()"
+      style="margin-bottom: 30px"
+    >
+      ¿Quieres crear un nuevo álbum?
+    </button>
+  </div>
+
+  <div class="row" *ngIf="this.habilitarCreacion">
+    <button type="button" class="btn btn-link" (click)="habilitaCreacion()">
+      Ocultar
+    </button>
+  </div>
+
+  <app-crear-album *ngIf="this.habilitarCreacion"></app-crear-album>
+</div>

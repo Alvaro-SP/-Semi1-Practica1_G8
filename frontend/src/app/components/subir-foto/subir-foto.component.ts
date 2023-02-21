@@ -94,7 +94,6 @@ export class SubirFotoComponent implements OnInit {
 
   subir(){
     this.cuerpo.Album = this.selectAlbum
-    alert(this.cuerpo.Album)
     if (this.cuerpo.Foto == "" || this.cuerpo.Album == "") {
       Swal.fire({
         icon: 'error',
