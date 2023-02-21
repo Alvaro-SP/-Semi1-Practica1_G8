@@ -85,6 +85,7 @@
         <select
           class="form-select custom-select select-selected"
           aria-label="Default select example"
+          [(ngModel)]="this.selectAlbum"
         >
           <ng-container *ngFor="let album of jsalbums">
             <option class="select-items" value="{{ album.Nombre }}">
@@ -105,8 +106,9 @@
           type="submit"
           class="bt btn-primary btn-lg"
           style="background-color: #fc9c1c; margin: 30px"
+          (click)="subir()"
         >
-          <!--(click)="Registrar()"-->
+          <!---->
           Submit
         </button>
       </div>
@@ -131,11 +133,5 @@
     </button>
   </div>
 
-  <div class="row" *ngIf="this.habilitarCreacion">
-    <div class="col"></div>
-    <div class="col" style="margin-top: 30px; margin-bottom: 30px">
-      <app-crear-album></app-crear-album>
-    </div>
-    <div class="col"></div>
-  </div>
+  <app-crear-album *ngIf="this.habilitarCreacion"></app-crear-album>
 </div>

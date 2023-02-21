@@ -29,20 +29,19 @@ export class SubirFotoComponent implements OnInit {
   }
 
   cuerpo: any = {
-    Usuario: '',
-    Nombre: '',
-    Password: '',
-    Foto: ''
+    Foto: '',
+    Album: ''
   }
   
 
-  confirmPass = ''
   jsalbums:any
   albums = []
   public showWebcam = false;
   public webcamImage: any = null;
   public hayFoto = false;
   habilitarCreacion = false;
+
+  selectAlbum:string = ''
 
   // webcam snapshot trigger
   private trigger: Subject<void> = new Subject<void>();
@@ -93,5 +92,57 @@ export class SubirFotoComponent implements OnInit {
     return this.trigger.asObservable();
   }
 
+  subir(){
+    this.cuerpo.Album = this.selectAlbum
+    alert(this.cuerpo.Album)
+    if (this.cuerpo.Foto == "" || this.cuerpo.Album == "") {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Complete todos los campos!',
+      })
+      return
+    }
+
+    try{
+      let auxArr = this.cuerpo.Foto.split(",", 2)
+      this.cuerpo.Foto = auxArr[1]
+    }catch{
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'No ha cargado una imagen!',
+      })
+      return
+    }
+
+    let auxArr = this.cuerpo.Foto.split(",", 2)
+    this.cuerpo.Foto = auxArr[1]
+    this.backend.subirFoto(this.cuerpo).subscribe(
+      res => {
+        const resp = JSON.parse(JSON.stringify(res))
+        if (resp.Res) {
+          
+          Swal.fire({
+            icon: 'success',
+            text: 'Se ha subido la fotografía al album correctamente',
+          })
+        } else {
+          Swal.fire({
+            icon: 'error',
+            text: 'Esta fotografía ya existe en este album!'
+          })
+          this.cuerpo.Foto = ""
+          this.cuerpo.Album = ""
+        }
+      },
+      err => {
+        Swal.fire({
+          icon: 'error',
+          text: 'Ocurrio un error'
+        })
+      }
+    )
+  }
 }
  

@@ -32,4 +32,12 @@ export class BackendService {
   getAlbums() {
     return this.http.get(`${this.URL}/getAlbums`);
   }
+
+  crearAlbum(cuerpo: any) {
+    return this.http.post(`${this.URL}/crearAlbum`, cuerpo);
+  }
+
+  subirFoto(cuerpo: any) {
+    return this.http.put(`${this.URL}/subirFoto`, cuerpo);
+  }
 }
