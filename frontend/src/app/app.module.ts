@@ -15,6 +15,7 @@ import { BarraSuperiorComponent } from './components/barra-superior/barra-superi
 import { EditarPerfilComponent } from './components/editar-perfil/editar-perfil.component';
 import { SubirFotoComponent } from './components/subir-foto/subir-foto.component';
 import { CrearAlbumComponent } from './components/crear-album/crear-album.component';
+import { EditarAlbumsComponent } from './components/editar-albums/editar-albums.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { CrearAlbumComponent } from './components/crear-album/crear-album.compon
     BarraSuperiorComponent,
     EditarPerfilComponent,
     SubirFotoComponent,
-    CrearAlbumComponent
+    CrearAlbumComponent,
+    EditarAlbumsComponent
   ],
   imports: [
     BrowserModule,
