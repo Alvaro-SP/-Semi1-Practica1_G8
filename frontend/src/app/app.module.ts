@@ -13,6 +13,8 @@ import { VerFotosComponent } from './components/ver-fotos/ver-fotos.component';
 import { AlbumComponent } from './components/album/album.component';
 import { BarraSuperiorComponent } from './components/barra-superior/barra-superior.component';
 import { EditarPerfilComponent } from './components/editar-perfil/editar-perfil.component';
+import { SubirFotoComponent } from './components/subir-foto/subir-foto.component';
+import { CrearAlbumComponent } from './components/crear-album/crear-album.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,9 @@ import { EditarPerfilComponent } from './components/editar-perfil/editar-perfil.
     VerFotosComponent,
     AlbumComponent,
     BarraSuperiorComponent,
-    EditarPerfilComponent
+    EditarPerfilComponent,
+    SubirFotoComponent,
+    CrearAlbumComponent
   ],
   imports: [
     BrowserModule,

@@ -5,6 +5,8 @@ import { LoginComponent } from './components/login/login.component';
 import { RegistroComponent } from './components/registro/registro.component';
 import { VerFotosComponent } from './components/ver-fotos/ver-fotos.component';
 import { EditarPerfilComponent } from './components/editar-perfil/editar-perfil.component';
+import { SubirFotoComponent } from './components/subir-foto/subir-foto.component';
+import { CrearAlbumComponent } from './components/crear-album/crear-album.component';
 
 const routes: Routes = [
   {
@@ -31,6 +33,14 @@ const routes: Routes = [
   {
     path: 'editarPerfil',
     component: EditarPerfilComponent
+  },
+  {
+    path: 'subirFoto',
+    component: SubirFotoComponent
+  },
+  {
+    path: 'crearAlbum',
+    component: CrearAlbumComponent
   }
 ];
 
