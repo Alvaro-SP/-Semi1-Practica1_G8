@@ -4,6 +4,7 @@ import (
 	// "bytes"
 	"crypto/md5"
 	"database/sql"
+	"log"
 
 	// "encoding/base64"
 	"encoding/hex"
@@ -95,6 +96,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	} else if count > 0 {
 		res = true
 	}
+	fmt.Println(count)
 	// Genera una respuesta JSON
 	respuesta := struct {
 		Res bool `json:"Res"`
@@ -142,7 +144,7 @@ func registro(w http.ResponseWriter, r *http.Request) {
 	// }
 	//! Crear un objeto "bytes.Reader" para leer los bytes de la imagen
 	// photoReader := bytes.NewReader(photoBytes)
-	filename := fmt.Sprintf("%s_%s_%d.jpg", user.Usuario, user.Nombre, "0")
+	filename := fmt.Sprintf("%s_%s_%s.jpg", user.Usuario, user.Nombre, "0")
 	// _, err = svc.PutObject(context.Background(), &s3.PutObjectInput{
 	// 	Bucket: aws.String("practica1-g8-imagenes"),
 	// 	Key:    aws.String("Fotos_Perfil/" + filename),
@@ -214,6 +216,38 @@ func registro(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Datos guardados Satisfactoriamente")
 	json.NewEncoder(w).Encode(map[string]bool{"Res": true})
 }
+func infouser(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	vars := mux.Vars(r)
+	usuario := vars["usuario"]
+
+	//! Se  Consulta a la tabla de usuarios
+	row := db.QueryRow("SELECT username, name, photo FROM usuario WHERE username = ?", usuario)
+	var username, name, photo string
+	err := row.Scan(&username, &name, &photo)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//! Se crea un objeto JSON con los datos obtenidos
+	data := map[string]string{
+		"Usuario": username,
+		"Nombre":  name,
+		"Foto":    photo,
+	}
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Enviar el objeto JSON como respuesta
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonData)
+
+}
 
 func main() {
 	var err error
@@ -237,6 +271,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/login", login).Methods("POST")
 	r.HandleFunc("/registro", registro).Methods("POST")
+	r.HandleFunc("/info/{usuario}", infouser).Methods("GET")
 
 	fmt.Println("Servidor iniciado CORRECTAMENTE")
 	err = http.ListenAndServe(":8080", r)
