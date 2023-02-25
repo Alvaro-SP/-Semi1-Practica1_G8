@@ -443,6 +443,54 @@ func getalbum(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// !			 █▀▄▀█ █▀█ █▀▄ █ █▀▀ █▄█   ▄▀█ █░░ █▄▄ █░█ █▀▄▀█
+// !			 █░▀░█ █▄█ █▄▀ █ █▀░ ░█░   █▀█ █▄▄ █▄█ █▄█ █░▀░█
+func modifyAlbum(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Content-Type", "application/json")
+	var user struct {
+		Album       string `json:"album"`
+		Lastusuario string `json:"lastusuario"`
+		Lastalbum   string `json:"lastalbum"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	fmt.Printf("%+v\n", user)
+
+	//! Get user_id from database
+	var userID string
+	err = db.QueryRow("SELECT id FROM usuario WHERE username=?", user.Lastusuario).Scan(&userID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+
+	//! Se  actualiza a la tabla de usuarios username, name, photo
+	stmt, err2 := db.Prepare("UPDATE album SET name_album = ? WHERE usuario_id = ? AND name_album = ?")
+	if err2 != nil {
+		fmt.Println(err2)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	_, err = stmt.Exec(user.Album, userID, user.Lastalbum)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+
+	//! Codifica la respuesta como JSON y la escribe en la respuesta HTTP
+	fmt.Println("Album Actualizados Satisfactoriamente")
+	json.NewEncoder(w).Encode(map[string]bool{"Res": true})
+}
+
 func main() {
 	var err error
 	db, err = obtenerBaseDeDatos()
@@ -470,6 +518,7 @@ func main() {
 	r.HandleFunc("/subirFoto", uploadphoto).Methods("PUT")
 	r.HandleFunc("/crearAlbum", createalbum).Methods("PUT")
 	r.HandleFunc("/getAlbums/{usuario}", getalbum).Methods("GET")
+	r.HandleFunc("/modificaAlbum", modifyAlbum).Methods("PUT")
 
 	fmt.Println("Servidor iniciado CORRECTAMENTE")
 	err = http.ListenAndServe(":8080", r)
