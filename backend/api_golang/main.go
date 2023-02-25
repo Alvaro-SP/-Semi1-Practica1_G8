@@ -96,7 +96,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 	} else if count > 0 {
 		res = true
 	}
-	fmt.Println(count)
 	// Genera una respuesta JSON
 	respuesta := struct {
 		Res bool `json:"Res"`
@@ -216,6 +215,10 @@ func registro(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Datos guardados Satisfactoriamente")
 	json.NewEncoder(w).Encode(map[string]bool{"Res": true})
 }
+
+// !		 █ █▄░█ █▀▀ █▀█ ▀ █░█ █▀ █▀▀ █▀█
+// !		 █ █░▀█ █▀░ █▄█ ▄ █▄█ ▄█ ██▄ █▀▄
+
 func infouser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -249,6 +252,61 @@ func infouser(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// !		 █░█ █▀█ █▀▄ ▄▀█ ▀█▀ █▀▀
+// !		 █▄█ █▀▀ █▄▀ █▀█ ░█░ ██▄
+func updateinfo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Content-Type", "application/json")
+	var user struct {
+		Usuario     string `json:"usuario"`
+		Nombre      string `json:"nombre"`
+		Password    string `json:"password"`
+		Foto        string `json:"foto"`
+		Lastusuario string `json:"lastusuario"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	fmt.Printf("%+v\n", user)
+	// ! se verifica la contrasena
+	hash := md5.Sum([]byte(user.Password))
+	// Convierte el resultado de md5.Sum a una cadena hexadecimal
+	hexHash := hex.EncodeToString(hash[:])
+	var count int
+	err = db.QueryRow("SELECT COUNT(*) FROM usuario WHERE username=? AND password=?", user.Lastusuario, hexHash).Scan(&count)
+	if err != nil {
+		fmt.Println("Credenciales incorrectas")
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	} else if count == 0 {
+		fmt.Println("Credenciales incorrectas")
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	print(hexHash)
+	fmt.Printf("%d", count)
+	//! Se  actualiza a la tabla de usuarios username, name, photo
+	stmt, err2 := db.Prepare("UPDATE usuario SET username = ?, name = ?, photo = ? WHERE username = ?")
+	if err2 != nil {
+		fmt.Println(err2)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+	}
+	_, err = stmt.Exec(user.Usuario, user.Nombre, user.Foto, user.Lastusuario)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+	}
+
+	//! Codifica la respuesta como JSON y la escribe en la respuesta HTTP
+	fmt.Println("Datos Actualizados Satisfactoriamente")
+	json.NewEncoder(w).Encode(map[string]bool{"Res": true})
+}
 func main() {
 	var err error
 	db, err = obtenerBaseDeDatos()
@@ -272,6 +330,7 @@ func main() {
 	r.HandleFunc("/login", login).Methods("POST")
 	r.HandleFunc("/registro", registro).Methods("POST")
 	r.HandleFunc("/info/{usuario}", infouser).Methods("GET")
+	r.HandleFunc("/actualizaInfo", updateinfo).Methods("PUT")
 
 	fmt.Println("Servidor iniciado CORRECTAMENTE")
 	err = http.ListenAndServe(":8080", r)
