@@ -360,6 +360,46 @@ func uploadphoto(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]bool{"Res": true})
 }
 
+// !		█▀▀ █▀█ █▀▀ ▄▀█ ▀█▀ █▀▀   ▄▀█ █░░ █▄▄ █░█ █▀▄▀█
+// !		█▄▄ █▀▄ ██▄ █▀█ ░█░ ██▄   █▀█ █▄▄ █▄█ █▄█ █░▀░█
+func createalbum(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Content-Type", "application/json")
+	var user struct {
+		Album       string `json:"album"`
+		Lastusuario string `json:"lastusuario"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	fmt.Printf("%+v\n", user)
+
+	//! Get user_id from database
+	var userID string
+	err = db.QueryRow("SELECT id FROM usuario WHERE username=?", user.Lastusuario).Scan(&userID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+
+	//! Insert new aLBUM into database
+	_, err = db.Exec("INSERT INTO album(name_album, usuario_id) VALUES(?, ?)", user.Album, userID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	//! Codifica la respuesta como JSON y la escribe en la respuesta HTTP
+	fmt.Println("Album Agregada Satisfactoriamente")
+	json.NewEncoder(w).Encode(map[string]bool{"Res": true})
+}
+
 func main() {
 	var err error
 	db, err = obtenerBaseDeDatos()
@@ -385,6 +425,7 @@ func main() {
 	r.HandleFunc("/info/{usuario}", infouser).Methods("GET")
 	r.HandleFunc("/actualizaInfo", updateinfo).Methods("PUT")
 	r.HandleFunc("/subirFoto", uploadphoto).Methods("PUT")
+	r.HandleFunc("/crearAlbum", createalbum).Methods("PUT")
 
 	fmt.Println("Servidor iniciado CORRECTAMENTE")
 	err = http.ListenAndServe(":8080", r)
