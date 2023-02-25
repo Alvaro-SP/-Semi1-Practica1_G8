@@ -1,11 +1,11 @@
 package main
 
 import (
-	"bytes"
-	"context"
+	// "bytes"
 	"crypto/md5"
 	"database/sql"
-	"encoding/base64"
+
+	// "encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -16,14 +16,15 @@ import (
 	// "strings"
 	// "time"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
 
 var db *sql.DB
+
+func print(a string) {
+	fmt.Println(a)
+}
 
 // ! Creando Structs para la insercion de datos en la tabla
 type Usuario struct {
@@ -57,7 +58,7 @@ func obtenerBaseDeDatos() (db *sql.DB, e error) {
 	// Debe tener la forma usuario:contraseña@host/nombreBaseDeDatos
 	dbtemp, err := sql.Open("mysql", fmt.Sprintf("%s:%s@%s/%s", usuario, pass, host, nombreBaseDeDatos))
 	if err != nil {
-		fmt.Println("ERROR DE CONEXION CON LA BASE DE DATOS \n")
+		fmt.Println("ERROR DE CONEXION CON LA BASE DE DATOS")
 	}
 	return dbtemp, nil
 }
@@ -119,49 +120,45 @@ func registro(w http.ResponseWriter, r *http.Request) {
 	var user Usuario
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(err)
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
 	fmt.Printf("%+v\n", user)
-	// sess := session.Must(session.NewSessionWithOptions(session.Options{
-	// 	SharedConfigState: session.SharedConfigEnable,
-	// }))
-	cfg, err := config.LoadDefaultConfig(context.Background())
-	if err != nil {
-		fmt.Println(err.Error())
-		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
-		return
-	}
-	cfg.Region = "us-west-2"
-	svc := s3.NewFromConfig(cfg)
+	// cfg, err := config.LoadDefaultConfig(context.Background())
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+	// 	return
+	// }
+	// cfg.Region = "us-west-2"
+	// svc := s3.NewFromConfig(cfg)
 
 	//! Decodificar la imagen en formato Base64
-	photoBytes, err := base64.StdEncoding.DecodeString(user.Foto)
-	if err != nil {
-		http.Error(w, "Error al decodificar la imagen", http.StatusBadRequest)
-		return
-	}
+	// photoBytes, err := base64.StdEncoding.DecodeString(user.Foto)
+	// if err != nil {
+	// 	http.Error(w, "Error al decodificar la imagen", http.StatusBadRequest)
+	// 	return
+	// }
 	//! Crear un objeto "bytes.Reader" para leer los bytes de la imagen
-	photoReader := bytes.NewReader(photoBytes)
-
+	// photoReader := bytes.NewReader(photoBytes)
 	filename := fmt.Sprintf("%s_%s_%d.jpg", user.Usuario, user.Nombre, "0")
-	_, err = svc.PutObject(context.Background(), &s3.PutObjectInput{
-		Bucket: aws.String("practica1-g8-imagenes"),
-		Key:    aws.String("Fotos_Perfil/" + filename),
-		Body:   photoReader,
-	})
-	if err != nil {
-		fmt.Println(err.Error())
-		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
-		return
-	}
+	// _, err = svc.PutObject(context.Background(), &s3.PutObjectInput{
+	// 	Bucket: aws.String("practica1-g8-imagenes"),
+	// 	Key:    aws.String("Fotos_Perfil/" + filename),
+	// 	Body:   photoReader,
+	// })
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+	// 	return
+	// }
 	user.Foto = fmt.Sprintf("https://practica1-g8-imagenes.s3.amazonaws.com/Fotos_Perfil/%s", filename)
 
 	//! Guardar el usuario en la base de datos
-	db, err := sql.Open("mysql", "root:2412@tcp(localhost:3306)/database")
+	db, err := sql.Open("mysql", "root:2412@tcp(localhost:3306)/mydb")
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(err)
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
@@ -174,7 +171,7 @@ func registro(w http.ResponseWriter, r *http.Request) {
 	//! Insertar el usuario en la tabla "usuario"
 	stmt, err := db.Prepare("INSERT INTO usuario(username, name, password, photo) VALUES(?, ?, ?, ?)")
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(err)
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
@@ -185,20 +182,33 @@ func registro(w http.ResponseWriter, r *http.Request) {
 	}
 	userID, err := res.LastInsertId()
 
-	// Crear un nuevo álbum para el usuario en la tabla "album"
+	//! Crear un nuevo álbum para el usuario en la tabla "album"
 	stmt, err = db.Prepare("INSERT INTO album(name_album, usuario_id) VALUES(?, ?)")
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(err)
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
-	_, err = stmt.Exec(fmt.Sprintf("%s's album", user.Nombre), userID)
+	// ! here only the first album with the first ID will name "user's album".
+	res, err = stmt.Exec(fmt.Sprintf("%s's album", user.Nombre), userID)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(err)
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
-
+	albumID, err := res.LastInsertId()
+	//! Agregar la foto que se guarda en el album del usuario
+	stmt, err = db.Prepare("INSERT INTO fotos(name_photo, photo_link, album_id) VALUES(?, ?, ?)")
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	_, err = stmt.Exec(fmt.Sprintf("%s_profile", user.Usuario), user.Foto, albumID)
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
 	// Codifica la respuesta como JSON y la escribe en la respuesta HTTP
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Println("Datos guardados Satisfactoriamente")
