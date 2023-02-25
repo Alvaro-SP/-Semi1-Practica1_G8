@@ -296,17 +296,70 @@ func updateinfo(w http.ResponseWriter, r *http.Request) {
 	if err2 != nil {
 		fmt.Println(err2)
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
 	}
 	_, err = stmt.Exec(user.Usuario, user.Nombre, user.Foto, user.Lastusuario)
 	if err != nil {
 		fmt.Println(err)
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
 	}
 
 	//! Codifica la respuesta como JSON y la escribe en la respuesta HTTP
 	fmt.Println("Datos Actualizados Satisfactoriamente")
 	json.NewEncoder(w).Encode(map[string]bool{"Res": true})
 }
+
+// !		█░█ █▀█ █░░ █▀█ ▄▀█ █▀▄   █▀█ █░█ █▀█ ▀█▀ █▀█
+// !		█▄█ █▀▀ █▄▄ █▄█ █▀█ █▄▀   █▀▀ █▀█ █▄█ ░█░ █▄█
+func uploadphoto(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Content-Type", "application/json")
+	var user struct {
+		Foto        string `json:"foto"`
+		Album       string `json:"album"`
+		Lastusuario string `json:"lastusuario"`
+		NamePhoto   string `json:"namephoto"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	fmt.Printf("%+v\n", user)
+
+	//! Get user_id from database
+	var userID string
+	err = db.QueryRow("SELECT id FROM usuario WHERE username=?", user.Lastusuario).Scan(&userID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	//! Get album_id from database
+	var albumID string
+	err = db.QueryRow("SELECT id FROM album WHERE name_album=? AND usuario_id =?", user.Album, userID).Scan(&albumID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+
+	//! Insert new photo into database
+	_, err = db.Exec("INSERT INTO fotos(name_photo, photo_link, album_id) VALUES(?, ?, ?)", user.NamePhoto, "link", albumID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	//! Codifica la respuesta como JSON y la escribe en la respuesta HTTP
+	fmt.Println("Foto Agregada Satisfactoriamente")
+	json.NewEncoder(w).Encode(map[string]bool{"Res": true})
+}
+
 func main() {
 	var err error
 	db, err = obtenerBaseDeDatos()
@@ -331,6 +384,7 @@ func main() {
 	r.HandleFunc("/registro", registro).Methods("POST")
 	r.HandleFunc("/info/{usuario}", infouser).Methods("GET")
 	r.HandleFunc("/actualizaInfo", updateinfo).Methods("PUT")
+	r.HandleFunc("/subirFoto", uploadphoto).Methods("PUT")
 
 	fmt.Println("Servidor iniciado CORRECTAMENTE")
 	err = http.ListenAndServe(":8080", r)
