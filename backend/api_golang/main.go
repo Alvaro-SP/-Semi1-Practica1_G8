@@ -36,9 +36,8 @@ type Usuario struct {
 }
 
 type Album struct {
-	ID        int    `json:"id"`
-	NameAlbum string `json:"name_album"`
-	UsuarioID int    `json:"usuario_id"`
+	ID     int    `json:"id"`
+	Nombre string `json:"Nombre"`
 }
 
 type Foto struct {
@@ -400,6 +399,50 @@ func createalbum(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]bool{"Res": true})
 }
 
+// !		█▀▀ █▀▀ ▀█▀   ▄▀█ █░░ █▄▄ █░█ █▀▄▀█
+// !		█▄█ ██▄ ░█░   █▀█ █▄▄ █▄█ █▄█ █░▀░█
+func getalbum(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	vars := mux.Vars(r)
+	usuario := vars["usuario"]
+
+	// Consultar los álbumes del usuario
+	rows, err := db.Query("SELECT album.id, name_album FROM album JOIN usuario ON album.usuario_id = usuario.id WHERE usuario.username = ?", usuario)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	defer rows.Close()
+
+	// Recorrer los resultados y guardarlos en una lista de álbumes
+	albums := []Album{}
+	for rows.Next() {
+		var id int
+		var nombre string
+		err := rows.Scan(&id, &nombre)
+		if err != nil {
+			fmt.Println(err)
+			json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+			return
+		}
+		album := Album{id, nombre}
+		albums = append(albums, album)
+	}
+
+	// Convertir la lista de álbumes a formato JSON y enviarla en la respuesta HTTP
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(albums)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+
+}
+
 func main() {
 	var err error
 	db, err = obtenerBaseDeDatos()
@@ -426,6 +469,7 @@ func main() {
 	r.HandleFunc("/actualizaInfo", updateinfo).Methods("PUT")
 	r.HandleFunc("/subirFoto", uploadphoto).Methods("PUT")
 	r.HandleFunc("/crearAlbum", createalbum).Methods("PUT")
+	r.HandleFunc("/getAlbums/{usuario}", getalbum).Methods("GET")
 
 	fmt.Println("Servidor iniciado CORRECTAMENTE")
 	err = http.ListenAndServe(":8080", r)
