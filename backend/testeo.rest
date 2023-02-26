@@ -1,0 +1,96 @@
+# ! SIGN IN  (FUNKO)
+# POST http://localhost:8080/login HTTP/1.1
+# content-type: application/json
+
+# {
+#     "Usuario":"Alvaro",
+#     "Password":"12345678"
+# }
+
+# ! SIGN UP (FUNKO)
+# POST http://localhost:8080/registro HTTP/1.1
+# content-type: application/json
+
+# {
+#     "Usuario":"Alvaro",
+#     "Nombre":"Alvaro Socop",
+#     "Password":"12345678",
+#     "Foto":"Pending"
+# }
+
+
+# ! GET USER INFO
+# GET http://localhost:8080/info/Alvaro HTTP/1.1
+
+# ! UPDATE USER INFO
+# PUT http://localhost:8080/actualizaInfo HTTP/1.1
+# content-type: application/json
+
+# {
+#     "Usuario":"Alvaro33",
+#     "Nombre":"Alvaro Socop555",
+#     "Password":"12345678",
+#     "Foto":"Pending2",
+#     "Lastusuario":"Alvaro33"
+# }
+
+# ! UPLOAD A PHOTO
+# PUT http://localhost:8080/subirFoto HTTP/1.1
+# content-type: application/json
+
+# {
+#     "Foto":"photo",
+#     "NamePhoto":"photo1",
+#     "Album":"Alvaro Socop's album",
+#     "Lastusuario":"Alvaro33"
+# }
+
+# ! CREATE A ALBUM
+# PUT http://localhost:8080/crearAlbum HTTP/1.1
+# content-type: application/json
+
+# {
+#     "Album":"NOMBRE_ALBUM",
+#     "Lastusuario":"Alvaro33"
+# }
+
+# ! GET ALL ALBUMS
+# GET http://localhost:8080/getAlbum HTTP/1.1
+
+# *res correcta: [ {ID:0,Nombre:almumA}, {ID:0,Nombre:almumB} ]
+# ! MODIFY ALBUM
+# PUT http://localhost:8080/modificaAlbum HTTP/1.1
+
+# {
+#     "Album":"NOMBRE2_ALBUM",
+#     "Lastusuario":"Alvaro33",
+#     "Lastalbum":"NOMBRE_ALBUM"
+# }
+
+# ! GET AN ALBUM
+# GET http://localhost:8080/getAlbum/Alvaro33/AlvaroSocopalbum HTTP/1.1
+
+# *res correcta:{"Album":[]}
+
+# ! DELETE ALBUM
+# PUT http://localhost:8080/eliminaAlbum/:id HTTP/1.1
+
+# {
+#     "ID":0,
+#     "Album":"NOMBRE2_ALBUM"
+# }
+# ! GET A PHOTO OF ANY USER
+# GET http://localhost:8080/verFotos/:usuario HTTP/1.1
+# *res correcta:[
+# *   {
+# *       "Nombre:"albumA",
+# *       "Fotos":
+# *                 ["foto1", "foto2", "foton"]
+# *   },
+# *   {
+# *       "Nombre:"AlbumB",
+# *       "Fotos":
+# *                 ["foto1", "foto2", "foton"]
+# *   }
+# *]
+
