@@ -556,6 +556,52 @@ func getAlbumid(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 
 }
+
+// !			█▀▄ █▀▀ █░░ █▀▀ ▀█▀ █▀▀   ▄▀█ █░░ █▄▄ █░█ █▀▄▀█
+// !			█▄▀ ██▄ █▄▄ ██▄ ░█░ ██▄   █▀█ █▄▄ █▄█ █▄█ █░▀░█
+func eliminaAlbum(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	vars := mux.Vars(r)
+	usuario := vars["username"]
+	album := vars["idalbum"]
+
+	//! Get user_id from database
+	var userID string
+	err := db.QueryRow("SELECT id FROM usuario WHERE username=?", usuario).Scan(&userID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	var albumID string
+	err = db.QueryRow("SELECT id FROM album WHERE usuario_id=? AND name_album=?", userID, album).Scan(&albumID)
+
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	//! First, delete all photos related to the album being deleted
+	_, err = db.Exec("DELETE FROM fotos WHERE album_id=?", albumID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	//! delete the album
+	_, err = db.Exec("DELETE FROM album WHERE id=?", albumID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	//! Codifica la respuesta como JSON y la escribe en la respuesta HTTP
+	fmt.Println("Album Eliminado Satisfactoriamente junto a sus fotos")
+	json.NewEncoder(w).Encode(map[string]bool{"Res": true})
+}
+
 func main() {
 	var err error
 	db, err = obtenerBaseDeDatos()
@@ -585,6 +631,7 @@ func main() {
 	r.HandleFunc("/getAlbums/{usuario}", getalbum).Methods("GET")
 	r.HandleFunc("/modificaAlbum", modifyAlbum).Methods("PUT")
 	r.HandleFunc("/getAlbum/{username}/{idalbum}", getAlbumid).Methods("GET")
+	r.HandleFunc("/eliminaAlbum/{username}/{idalbum}", eliminaAlbum).Methods("DELETE")
 
 	fmt.Println("Servidor iniciado CORRECTAMENTE")
 	err = http.ListenAndServe(":8080", r)
