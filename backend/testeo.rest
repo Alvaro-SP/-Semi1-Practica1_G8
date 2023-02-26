@@ -73,14 +73,10 @@
 # *res correcta:{"Album":[]}
 
 # ! DELETE ALBUM
-# PUT http://localhost:8080/eliminaAlbum/:id HTTP/1.1
+# DELETE http://localhost:8080/eliminaAlbum/Alvaro33/AlvaroSocopalbum HTTP/1.1
 
-# {
-#     "ID":0,
-#     "Album":"NOMBRE2_ALBUM"
-# }
 # ! GET A PHOTO OF ANY USER
-# GET http://localhost:8080/verFotos/:usuario HTTP/1.1
+GET http://localhost:8080/verFotos/Alvaro33/AlvaroSocopalbum HTTP/1.1
 # *res correcta:[
 # *   {
 # *       "Nombre:"albumA",
