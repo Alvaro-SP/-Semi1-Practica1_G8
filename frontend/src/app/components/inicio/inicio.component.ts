@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { BackendService } from 'src/app/services/backend.service';
 
@@ -16,7 +15,7 @@ export class InicioComponent implements OnInit {
     Foto: ''
   }
 
-  constructor(private router: Router, private backend: BackendService, private sanitizer: DomSanitizer) {
+  constructor(private router: Router, private backend: BackendService) {
     if (sessionStorage.getItem("usuario") == null) {
       alert("Inicie sesion para poder entrar a su perfil")
       this.router.navigate(['login'])
@@ -32,7 +31,7 @@ export class InicioComponent implements OnInit {
             var data = JSON.parse(js)
             this.cuerpo.Usuario = data.Usuario
             this.cuerpo.Nombre = data.Nombre
-            this.cuerpo.Foto = this.sanitizer.bypassSecurityTrustUrl(`data:image/png;base64, ${data.Foto}`)
+            this.cuerpo.Foto = data.Foto
           }
         },
         err => {
