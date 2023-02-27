@@ -16,6 +16,7 @@ import { EditarPerfilComponent } from './components/editar-perfil/editar-perfil.
 import { SubirFotoComponent } from './components/subir-foto/subir-foto.component';
 import { CrearAlbumComponent } from './components/crear-album/crear-album.component';
 import { EditarAlbumsComponent } from './components/editar-albums/editar-albums.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { EditarAlbumsComponent } from './components/editar-albums/editar-albums.
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    WebcamModule
+    WebcamModule,
+    CommonModule
   ],
   providers: [],
   bootstrap: [AppComponent]
