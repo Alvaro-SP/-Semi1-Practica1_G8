@@ -1,6 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-
 @Component({
   selector: 'app-album',
   templateUrl: './album.component.html',
@@ -12,16 +10,23 @@ export class AlbumComponent implements OnInit {
   nombre: string = ''
 
   @Input()
-  fotos: Array<any> = []
+  fotos: Array<String> = []
 
+  firsFoto:any=""
 
-  constructor(private sanitizer: DomSanitizer) {
-    for (let i = 0; i < this.fotos.length; i++) {
-      this.fotos[i] = this.sanitizer.bypassSecurityTrustUrl(`data:image/png;base64, ${this.fotos[i]}`)
-    }
+  constructor() {
+   
   }
 
   ngOnInit(): void {
+    if (this.fotos.length == 0) {
+      this.firsFoto = "https://pbs.twimg.com/media/El1D0t0XgAAzu75.jpg"
+    }else{
+      this.firsFoto=this.fotos.shift()
+    }
   }
 
+  getNombre() {
+    return this.nombre.split(" ").join("")
+  }
 }
