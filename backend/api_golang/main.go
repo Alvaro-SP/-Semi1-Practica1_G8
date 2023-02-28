@@ -439,7 +439,7 @@ func uploadphoto(w http.ResponseWriter, r *http.Request) {
 	photoReader := bytes.NewReader(photoBytes)
 
 	// TODO: PARAMETROS DE KEYNAME(url) =  "Fotos_Perfil/[usuario]_[namealbum]_[namephoto].jpg"
-	keyName := fmt.Sprintf("Fotos_Publicadas/%s_%s_%s.jpg", user.Usuario, user.Album, user.NamePhoto)
+	keyName := fmt.Sprintf("Fotos_Publicadas/%s_%s_%s.jpg", user.Lastusuario, user.Album, user.NamePhoto)
 
 	region := "us-east-2"
 	//! create a new S3 client
