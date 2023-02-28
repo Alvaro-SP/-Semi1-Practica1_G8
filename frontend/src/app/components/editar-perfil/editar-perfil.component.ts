@@ -27,7 +27,7 @@ export class EditarPerfilComponent implements OnInit {
           var data = JSON.parse(js)
           this.cuerpo.Usuario = data.Usuario
           this.cuerpo.Nombre = data.Nombre
-          this.cuerpo.Foto = this.sanitizer.bypassSecurityTrustUrl(`data:image/png;base64, ${data.Foto}`)
+          this.cuerpo.Foto = data.Foto
         }
       },
       err => {
@@ -43,11 +43,13 @@ export class EditarPerfilComponent implements OnInit {
     Usuario: '',
     Nombre: '',
     Password: '',
-    Foto: ''
+    Foto: '',
+    Lastusuario: ''
   }
   
 
   confirmPass = ''
+  User = ""
   public showWebcam = false;
   public webcamImage: any = null;
   public cambiarFoto = false;
@@ -99,6 +101,8 @@ export class EditarPerfilComponent implements OnInit {
 
 
   Registrar() {
+    
+    this.cuerpo.Lastusuario = sessionStorage.getItem("usuario")
     Swal.fire({
       title: 'Ingresa tu contraseña',
       input: 'password',
@@ -108,7 +112,7 @@ export class EditarPerfilComponent implements OnInit {
       showCancelButton: true,
       confirmButtonText: 'Guardar cambios',
       showConfirmButton: true,
-      preConfirm: (pass) => {
+      preConfirm: async (pass) => {
         this.cuerpo.Password = pass
         if (this.cuerpo.Usuario == "" || this.cuerpo.Nombre == "" || this.cuerpo.Password == "" || this.cuerpo.Foto == "") {
           Swal.fire({
@@ -117,47 +121,55 @@ export class EditarPerfilComponent implements OnInit {
             text: 'Complete todos los campos!',
           })
           return
+        }else{
+          this.User = this.cuerpo.Usuarios
         }
       },
       allowOutsideClick: () => !Swal.isLoading()
-    })
+    }).then(() => {
 
-    try{
-      let auxArr = this.cuerpo.Foto.split(",", 2)
-      this.cuerpo.Foto = auxArr[1]
-    }catch{
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'No ha cargado una imagen!',
-      })
-      return
-    }
-    
-    this.backend.Editar(this.cuerpo).subscribe(
-      res => {
-        const resp = JSON.parse(JSON.stringify(res))
-        if (resp.Res) {
-          Swal.fire({
-            icon: 'success',
-            text: 'Información actualizada con éxito',
-          })
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Contraseña erronea',
-          })
-          this.cuerpo.Password = ""
-        }
-      },
-      err => {
+      try{
+        let auxArr = this.cuerpo.Foto.split(",", 2)
+        this.cuerpo.Foto = auxArr[1]
+      }catch{
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
-          text: 'Ocurrió un error!',
+          text: 'No ha cargado una imagen!',
         })
+        return
       }
-    )
+      
+      this.backend.Editar(this.cuerpo).subscribe(
+        res => {
+          const resp = JSON.parse(JSON.stringify(res))
+          if (resp.Res) {
+            sessionStorage.removeItem("usuario")
+            sessionStorage.setItem("usuario", this.cuerpo.Usuario)
+            Swal.fire({
+              icon: 'success',
+              text: 'Información actualizada con éxito',
+            })
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Contraseña erronea',
+            })
+            this.cuerpo.Password = ""
+          }
+        },
+        err => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Ocurrió un error!',
+          })
+        }
+      )
+
+    })
+
+    
   }
 }

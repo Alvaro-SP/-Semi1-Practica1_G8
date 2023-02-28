@@ -15,14 +15,19 @@ import Swal from 'sweetalert2'
 export class SubirFotoComponent implements OnInit {
 
   constructor(private backend: BackendService, private router: Router) { 
-    this.backend.getAlbums().subscribe(
-      res => {
-        this.jsalbums = res
-      },
-      err => {
-        alert("Ocurrio un error")
-      }
-    )
+    if (sessionStorage.getItem("usuario") == null) {
+      alert("Inicie sesion para poder entrar a su perfil")
+      this.router.navigate(['login'])
+    } else {
+      this.backend.getAlbums(sessionStorage.getItem("usuario")).subscribe(
+        res => {
+          this.jsalbums = res
+        },
+        err => {
+          alert("Ocurrio un error")
+        }
+      )
+    }
    }
 
   ngOnInit(): void {
@@ -30,7 +35,8 @@ export class SubirFotoComponent implements OnInit {
 
   cuerpo: any = {
     Foto: '',
-    Album: ''
+    Album: '',
+    NamePhoto:''
   }
   
 
@@ -94,7 +100,7 @@ export class SubirFotoComponent implements OnInit {
 
   subir(){
     this.cuerpo.Album = this.selectAlbum
-    if (this.cuerpo.Foto == "" || this.cuerpo.Album == "") {
+    if (this.cuerpo.Foto == "" || this.cuerpo.Album == "" || this.cuerpo.NamePhoto == "") {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
