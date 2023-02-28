@@ -16,7 +16,7 @@ export class VerFotosComponent implements OnInit {
       alert("Inicie sesion para poder entrar a su perfil")
       this.router.navigate(['login'])
     } else {
-      this.backend.getInfo(sessionStorage.getItem("usuario")).subscribe(
+      this.backend.getFotos(sessionStorage.getItem("usuario")).subscribe(
         res => {
           var js = JSON.stringify(res)
           if (js.includes("Res")) {
