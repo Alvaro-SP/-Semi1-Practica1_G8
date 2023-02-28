@@ -29,8 +29,8 @@ export class BackendService {
     return this.http.put(`${this.URL}/actualizaInfo`, cuerpo);
   }
 
-  getAlbums() {
-    return this.http.get(`${this.URL}/getAlbums`);
+  getAlbums(usuario: any) {
+    return this.http.get(`${this.URL}/getAlbums/${usuario}`);
   }
 
   crearAlbum(cuerpo: any) {

@@ -15,7 +15,7 @@ import Swal from 'sweetalert2'
 export class EditarAlbumsComponent implements OnInit {
 
   constructor(private backend: BackendService, private router: Router) { 
-    this.backend.getAlbums().subscribe(
+    this.backend.getAlbums(sessionStorage.getItem("usuario")).subscribe(
       res => {
         this.jsalbums = res
       },
@@ -30,7 +30,8 @@ export class EditarAlbumsComponent implements OnInit {
 
   cuerpo: any = {
     Id: '',
-    Album: ''
+    Album: '',
+    Lastalbum:''
   }
   
 
@@ -73,6 +74,7 @@ export class EditarAlbumsComponent implements OnInit {
           })
           this.cuerpo.Foto = ""
           this.cuerpo.Album = ""
+          this.cuerpo.Lastalbum = ""
         }
       },
       err => {
@@ -85,7 +87,15 @@ export class EditarAlbumsComponent implements OnInit {
   }
 
   subir(){
-    if (this.cuerpo.Id == "" || this.cuerpo.Album == "") {
+    var c = 0
+    this.jsalbums.forEach( () => {
+      if (this.jsalbums[c].Id == this.cuerpo.Id){
+        this.cuerpo.Lastalbum = this.jsalbums[c].Nombre
+      }
+      c++
+    });
+
+    if (this.cuerpo.Id == "" || this.cuerpo.Album == "" || this.cuerpo.Lastalbum == "") {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
@@ -111,6 +121,7 @@ export class EditarAlbumsComponent implements OnInit {
           })
           this.cuerpo.Foto = ""
           this.cuerpo.Album = ""
+          this.cuerpo.Lastalbum = ""
         }
       },
       err => {

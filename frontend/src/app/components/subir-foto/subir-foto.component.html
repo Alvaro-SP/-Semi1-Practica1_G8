@@ -10,6 +10,20 @@
     <div class="col">
       <div class="mx-auto" style="width: 80%">
         <label
+          for="exampleFormControlInput1"
+          class="form-label"
+          style="color: white"
+          >Nombre de la imagen</label
+        >
+        <input
+          type="text"
+          class="form-control"
+          id="exampleFormControlInput1"
+          placeholder="Name photo"
+          [(ngModel)]="this.cuerpo.NamePhoto"
+          [ngModelOptions]="{ standalone: true }"
+        />
+        <label
           for="exampleFormControlTextarea1"
           class="form-label"
           style="color: white"
@@ -76,7 +90,7 @@
         </div>
       </div>
     </div>
-  </div> 
+  </div>
 
   <div class="row">
     <div class="col"></div>
