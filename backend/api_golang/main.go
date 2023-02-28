@@ -2,11 +2,15 @@ package main
 
 import (
 	// "bytes"
+	"bytes"
 	"crypto/md5"
 	"database/sql"
+	"io"
 	"log"
+	"os"
 
 	// "encoding/base64"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -17,11 +21,74 @@ import (
 	// "strings"
 	// "time"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 )
 
-var db *sql.DB
+var (
+	db *sql.DB
+)
+
+type S3Client struct {
+	Region string
+	Sess   *session.Session
+	Svc    *s3.S3
+}
+
+func exitErrorf(msg string, args ...interface{}) {
+	fmt.Fprintf(os.Stderr, msg+"\n", args...)
+	os.Exit(1)
+}
+
+func NewS3Client(region string) *S3Client {
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(region),
+	})
+	if err != nil {
+		exitErrorf("Failed to create AWS session: %v", err)
+	}
+
+	return &S3Client{
+		Region: region,
+		Sess:   sess,
+		Svc:    s3.New(sess),
+	}
+}
+
+func (c *S3Client) ListBuckets() {
+	result, err := c.Svc.ListBuckets(nil)
+	if err != nil {
+		exitErrorf("Failed to list buckets: %v", err)
+	}
+
+	fmt.Println("Buckets:")
+	for _, b := range result.Buckets {
+		fmt.Printf("* %s created on %s\n",
+			aws.StringValue(b.Name), aws.TimeValue(b.CreationDate))
+	}
+}
+
+func (c *S3Client) UploadFile(reader io.Reader, keyName string) error {
+	//! seteamos el bucket y el nombre del archivo
+	bucket := "practica1-g8-imagenes"
+	uploader := s3manager.NewUploader(c.Sess)
+	_, err := uploader.Upload(&s3manager.UploadInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(keyName),
+		Body:   reader,
+	})
+	if err != nil {
+		return fmt.Errorf("Failed to upload file %s: %v", err)
+	}
+
+	return nil
+}
+
+// *-----------------------------------------------------------------------------------------
 
 func print(a string) {
 	fmt.Println(a)
@@ -51,12 +118,12 @@ type Foto struct {
 // ! funcion para obtener conexion de la base de datos
 func obtenerBaseDeDatos() (db *sql.DB, e error) {
 	// * open the db connection.
-	usuario := "root"
-	pass := "2412"
-	host := "tcp(localhost:3306)" // can the 127.0.0.1 ip too instead of db
+	usuario := "adming8semi"
+	pass := "sisalesemi"
+	host := "mydb.c0fggfyplwpz.us-east-2.rds.amazonaws.com:3306" // replace with your RDS endpoint
 	nombreBaseDeDatos := "mydb"
-	// Debe tener la forma usuario:contraseña@host/nombreBaseDeDatos
-	dbtemp, err := sql.Open("mysql", fmt.Sprintf("%s:%s@%s/%s", usuario, pass, host, nombreBaseDeDatos))
+
+	dbtemp, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s", usuario, pass, host, nombreBaseDeDatos))
 	if err != nil {
 		fmt.Println("ERROR DE CONEXION CON LA BASE DE DATOS")
 	}
@@ -124,45 +191,34 @@ func registro(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
-	fmt.Printf("%+v\n", user)
-	// cfg, err := config.LoadDefaultConfig(context.Background())
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	json.NewEncoder(w).Encode(map[string]bool{"Res": false})
-	// 	return
-	// }
-	// cfg.Region = "us-west-2"
-	// svc := s3.NewFromConfig(cfg)
-
+	// fmt.Printf("%+v\n", user)
+	// ****************************************************************
 	//! Decodificar la imagen en formato Base64
-	// photoBytes, err := base64.StdEncoding.DecodeString(user.Foto)
-	// if err != nil {
-	// 	http.Error(w, "Error al decodificar la imagen", http.StatusBadRequest)
-	// 	return
-	// }
-	//! Crear un objeto "bytes.Reader" para leer los bytes de la imagen
-	// photoReader := bytes.NewReader(photoBytes)
-	filename := fmt.Sprintf("%s_%s_%s.jpg", user.Usuario, user.Nombre, "0")
-	// _, err = svc.PutObject(context.Background(), &s3.PutObjectInput{
-	// 	Bucket: aws.String("practica1-g8-imagenes"),
-	// 	Key:    aws.String("Fotos_Perfil/" + filename),
-	// 	Body:   photoReader,
-	// })
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	json.NewEncoder(w).Encode(map[string]bool{"Res": false})
-	// 	return
-	// }
-	user.Foto = fmt.Sprintf("https://practica1-g8-imagenes.s3.amazonaws.com/Fotos_Perfil/%s", filename)
-
-	//! Guardar el usuario en la base de datos
-	db, err := sql.Open("mysql", "root:2412@tcp(localhost:3306)/mydb")
+	photoBytes, err := base64.StdEncoding.DecodeString(user.Foto)
 	if err != nil {
 		fmt.Println(err)
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
-	defer db.Close()
+	//! Crear un objeto "bytes.Reader" para leer los bytes de la imagen
+	photoReader := bytes.NewReader(photoBytes)
+
+	// TODO: PARAMETROS DE KEYNAME(url) =  "Fotos_Perfil/[usuario].jpg"
+	keyName := fmt.Sprintf("Fotos_Perfil/%s.jpg", user.Usuario)
+
+	region := "us-east-2"
+	//! create a new S3 client
+	s3Client := NewS3Client(region)
+	// ! Subir la imagen a S3
+	err = s3Client.UploadFile(photoReader, keyName)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	// ****************************************************************
+	user.Foto = fmt.Sprintf("https://practica1-g8-imagenes.s3.amazonaws.com/%s", keyName)
+
 	//! Encriptar la contraseña utilizando MD5
 	hasher := md5.New()
 	hasher.Write([]byte(user.Password))
@@ -288,8 +344,32 @@ func updateinfo(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
-	print(hexHash)
-	fmt.Printf("%d", count)
+	// ****************************************************************
+	//! Decodificar la imagen en formato Base64
+	photoBytes, err := base64.StdEncoding.DecodeString(user.Foto)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	//! Crear un objeto "bytes.Reader" para leer los bytes de la imagen
+	photoReader := bytes.NewReader(photoBytes)
+
+	// TODO: PARAMETROS DE KEYNAME(url) =  "Fotos_Perfil/[usuario].jpg"
+	keyName := fmt.Sprintf("Fotos_Perfil/%s.jpg", user.Usuario)
+
+	region := "us-east-2"
+	//! create a new S3 client
+	s3Client := NewS3Client(region)
+	// ! Subir la imagen a S3
+	err = s3Client.UploadFile(photoReader, keyName)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	// ****************************************************************
+	user.Foto = fmt.Sprintf("https://practica1-g8-imagenes.s3.amazonaws.com/%s", keyName)
 	//! Se  actualiza a la tabla de usuarios username, name, photo
 	stmt, err2 := db.Prepare("UPDATE usuario SET username = ?, name = ?, photo = ? WHERE username = ?")
 	if err2 != nil {
@@ -347,6 +427,32 @@ func uploadphoto(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// ****************************************************************
+	//! Decodificar la imagen en formato Base64
+	photoBytes, err := base64.StdEncoding.DecodeString(user.Foto)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	//! Crear un objeto "bytes.Reader" para leer los bytes de la imagen
+	photoReader := bytes.NewReader(photoBytes)
+
+	// TODO: PARAMETROS DE KEYNAME(url) =  "Fotos_Perfil/[usuario]_[namealbum]_[namephoto].jpg"
+	keyName := fmt.Sprintf("Fotos_Publicadas/%s_%s_%s.jpg", user.Usuario, user.Album, user.NamePhoto)
+
+	region := "us-east-2"
+	//! create a new S3 client
+	s3Client := NewS3Client(region)
+	// ! Subir la imagen a S3
+	err = s3Client.UploadFile(photoReader, keyName)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	user.Foto = fmt.Sprintf("https://practica1-g8-imagenes.s3.amazonaws.com/%s", keyName)
+	// ****************************************************************
 	//! Insert new photo into database
 	_, err = db.Exec("INSERT INTO fotos(name_photo, photo_link, album_id) VALUES(?, ?, ?)", user.NamePhoto, "link", albumID)
 	if err != nil {
@@ -664,6 +770,7 @@ func Veruserfotos(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
 	var err error
 	db, err = obtenerBaseDeDatos()
 	if err != nil {
@@ -681,6 +788,7 @@ func main() {
 	}
 	// Listo, aquí ya podemos usar a db!
 	fmt.Println("Conectado correctamente a la base de datos")
+
 	// ! ********** RUTAS ***********
 	r := mux.NewRouter()
 	r.HandleFunc("/login", login).Methods("POST")
