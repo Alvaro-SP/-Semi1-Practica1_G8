@@ -602,6 +602,67 @@ func eliminaAlbum(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]bool{"Res": true})
 }
 
+// !			█░█ █▀▀ █▀█   █▀▀ █▀█ ▀█▀ █▀█ █▀
+// !			▀▄▀ ██▄ █▀▄   █▀░ █▄█ ░█░ █▄█ ▄█
+func Veruserfotos(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	vars := mux.Vars(r)
+	usuario := vars["usuario"]
+
+	//! Get user_id from database
+	var userID string
+	err := db.QueryRow("SELECT id FROM usuario WHERE username=?", usuario).Scan(&userID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+
+	//! Create a map of albums with their photos
+	albums := make(map[string][]string) //* smoke this query >:v
+	rows, err := db.Query("SELECT a.id, a.name_album, f.photo_link FROM album a INNER JOIN fotos f ON a.id = f.album_id WHERE a.usuario_id=?", userID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var albumID, albumName, photoLink string
+		err := rows.Scan(&albumID, &albumName, &photoLink)
+		if err != nil {
+			fmt.Println(err)
+			json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+			return
+		}
+		if _, ok := albums[albumName]; !ok {
+			albums[albumName] = []string{}
+		}
+		albums[albumName] = append(albums[albumName], photoLink)
+	}
+	err = rows.Err()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	//! Create a slice of albums with their photos
+	response := []map[string]interface{}{}
+	for albumName, photos := range albums {
+		album := map[string]interface{}{
+			"Nombre": albumName,
+			"Fotos":  photos,
+		}
+		response = append(response, album)
+	}
+
+	//! Send the JSON response
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
+
 func main() {
 	var err error
 	db, err = obtenerBaseDeDatos()
@@ -632,6 +693,7 @@ func main() {
 	r.HandleFunc("/modificaAlbum", modifyAlbum).Methods("PUT")
 	r.HandleFunc("/getAlbum/{username}/{idalbum}", getAlbumid).Methods("GET")
 	r.HandleFunc("/eliminaAlbum/{username}/{idalbum}", eliminaAlbum).Methods("DELETE")
+	r.HandleFunc("/verFotos/{usuario}", Veruserfotos).Methods("GET")
 
 	fmt.Println("Servidor iniciado CORRECTAMENTE")
 	err = http.ListenAndServe(":8080", r)

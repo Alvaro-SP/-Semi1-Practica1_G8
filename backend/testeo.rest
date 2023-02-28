@@ -76,7 +76,7 @@
 # DELETE http://localhost:8080/eliminaAlbum/Alvaro33/AlvaroSocopalbum HTTP/1.1
 
 # ! GET A PHOTO OF ANY USER
-GET http://localhost:8080/verFotos/Alvaro33/AlvaroSocopalbum HTTP/1.1
+GET http://localhost:8080/verFotos/Alvaro33 HTTP/1.1
 # *res correcta:[
 # *   {
 # *       "Nombre:"albumA",
