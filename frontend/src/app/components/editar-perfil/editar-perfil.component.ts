@@ -101,7 +101,7 @@ export class EditarPerfilComponent implements OnInit {
 
 
   Registrar() {
-    
+   
     this.cuerpo.Lastusuario = sessionStorage.getItem("usuario")
     Swal.fire({
       title: 'Ingresa tu contraseña',
@@ -129,8 +129,11 @@ export class EditarPerfilComponent implements OnInit {
     }).then(() => {
 
       try{
-        let auxArr = this.cuerpo.Foto.split(",", 2)
-        this.cuerpo.Foto = auxArr[1]
+        if (!this.cuerpo.Foto.includes("http")){
+          let auxArr = this.cuerpo.Foto.split(",", 2)
+          this.cuerpo.Foto = auxArr[1]
+        }
+        
       }catch{
         Swal.fire({
           icon: 'error',
@@ -139,7 +142,7 @@ export class EditarPerfilComponent implements OnInit {
         })
         return
       }
-      
+      console.log(this.cuerpo)
       this.backend.Editar(this.cuerpo).subscribe(
         res => {
           const resp = JSON.parse(JSON.stringify(res))
