@@ -40,7 +40,7 @@ app.get('/info/:usuario', jsonParser,(req, res) => login(req, res));
 
 app.put('/actualizaInfo', jsonParser,(req, res) => login(req, res));
 
-app.put('/subirFoto', jsonParser,(req, res) => login(req, res));
+app.put('/subirFoto', jsonParser,(req, res) => uploadfoto(req, res));
 
 app.post('/crearAlbum', jsonParser,(req, res) => login(req, res));
 

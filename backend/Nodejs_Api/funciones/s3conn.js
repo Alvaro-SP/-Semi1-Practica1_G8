@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+import AWS from'aws-sdk'
 
 
 import * as dotenv from 'dotenv'
@@ -14,30 +14,68 @@ var s3 = new AWS.S3(
 
 
 
-const uploadPhoto = async (data) => {
+const uploadPhotoprofile = async (data) => {
     try {
-        var name = `${data.person.user}-${data.person.name}.jpg`;
-        let buffer = new Buffer.from(data.photo, "base64");
+        var name = `Foto_Perfil/${data.Usuario}.jpg`;
+        let buffer = new Buffer.from(data.Foto, "base64");
         var params = {
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: name,
             Body: buffer,
             ContentType: "image/jpeg",
+        };        
+        var params2 = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: name,
+            //Body: buffer,
+            //ContentType: "image/jpeg",
         };
         await s3.upload(params).promise();
         // Generate a URL for the uploaded object        
-        const url = s3.getSignedUrl('getObject', params);
+        const url = s3.getSignedUrl('getObject', params2);
+        console.log("entra aqui")
         console.log(`https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${name}`)
         console.log(url)
         return `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${name}`;
     } catch (error) {
+        console.log("error")
+        return error;
+    }
+};
+
+
+const uploadPhotopic = async (data) => {
+    try {
+        var name = `Foto_Perfil/${data.Lastusuario}_${data.Album}_${data.NamePhoto}.jpg`;
+        let buffer = new Buffer.from(data.Foto, "base64");
+        var params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: name,
+            Body: buffer,
+            ContentType: "image/jpeg",
+        };        
+        var params2 = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: name,
+            //Body: buffer,
+            //ContentType: "image/jpeg",
+        };
+        await s3.upload(params).promise();
+        // Generate a URL for the uploaded object        
+        const url = s3.getSignedUrl('getObject', params2);
+        console.log("entra aqui")
+        console.log(`https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${name}`)
+        console.log(url)
+        return `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${name}`;
+    } catch (error) {
+        console.log("error")
         return error;
     }
 };
 
 const deletePhoto = async (data) => {
     try {
-        var name = `${data.person.user}-${data.person.name}.jpg`;
+        var name = `${data.user}-${data.name}.jpg`;
         var params = {
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: name,
@@ -51,4 +89,4 @@ const deletePhoto = async (data) => {
 
 
 
-export { uploadPhoto, deletePhoto }
+export { uploadPhotoprofile, uploadPhotopic, deletePhoto }
