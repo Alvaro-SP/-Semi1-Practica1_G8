@@ -2,7 +2,7 @@ import express from'express'
 const app = express();
 const PORT = 8080;
 import bodyParser from'body-parser'
-import {test, login} from './funciones/funciones.js'
+import { test, login, Registrar, uploadfoto } from './funciones/funciones.js'
 
 var jsonParser = bodyParser.json()
  
@@ -34,7 +34,7 @@ app.post('/', jsonParser,(req, res) => test(req, res));
 
 app.post('/login', jsonParser,(req, res) => login(req, res));
 
-app.post('/registro', jsonParser,(req, res) => login(req, res));
+app.post('/registro', jsonParser,(req, res) => Registrar(req, res));
 
 app.get('/info/:usuario', jsonParser,(req, res) => login(req, res));
 
