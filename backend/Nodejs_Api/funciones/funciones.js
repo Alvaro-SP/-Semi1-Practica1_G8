@@ -106,6 +106,36 @@ const Registrar = async (req, res) => {
     }
 }
 
+
+const infouser = async (req, res) => {
+    const data = req.params;
+    try {            
+        var sql = `SELECT username, name, photo FROM usuario WHERE username = '${data.usuario}'`
+        console.log(sql)
+        con.query(sql, function (err, result, fields) {
+            if (err) {res.jsonp({Res:false})}
+            else{
+                console.log(result);
+                if (result.length == 1){
+                    res.jsonp({
+                        Usuario: result[0].username,
+                        Nombre:  result[0].name,
+                        Foto:    result[0].photo,
+                        Res : true
+                    })
+                }else{
+                    res.jsonp({Res:false})
+                }                    
+            }
+        });
+
+    } catch (error) {
+        console.log(error)
+        res.jsonp({Res:false})
+    }
+}
+
+
 const uploadfoto = async (req, res) => {
     try {
         const data = req.body;
@@ -127,4 +157,4 @@ const uploadfoto = async (req, res) => {
 
 
 
-export { test, login, Registrar, uploadfoto }
+export { test, login, Registrar, infouser, uploadfoto }
