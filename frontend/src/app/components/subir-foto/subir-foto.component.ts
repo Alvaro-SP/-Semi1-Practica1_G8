@@ -36,7 +36,8 @@ export class SubirFotoComponent implements OnInit {
   cuerpo: any = {
     Foto: '',
     Album: '',
-    NamePhoto:''
+    NamePhoto:'',
+    Lastusuario: sessionStorage.getItem("usuario")
   }
   
 
@@ -99,6 +100,7 @@ export class SubirFotoComponent implements OnInit {
   }
 
   subir(){
+    //console.log(this.cuerpo.Foto)
     this.cuerpo.Album = this.selectAlbum
     if (this.cuerpo.Foto == "" || this.cuerpo.Album == "" || this.cuerpo.NamePhoto == "") {
       Swal.fire({
@@ -121,8 +123,7 @@ export class SubirFotoComponent implements OnInit {
       return
     }
 
-    let auxArr = this.cuerpo.Foto.split(",", 2)
-    this.cuerpo.Foto = auxArr[1]
+    console.log(this.cuerpo)
     this.backend.subirFoto(this.cuerpo).subscribe(
       res => {
         const resp = JSON.parse(JSON.stringify(res))
