@@ -42,6 +42,7 @@ export class LoginComponent implements OnInit {
       },
       err => {
         alert("Ocurrio un error :(")
+        console.log(err)
       }
     )
   }
