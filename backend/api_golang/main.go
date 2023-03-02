@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/rs/cors"
 
@@ -357,72 +358,72 @@ func updateinfo(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
+	if !strings.HasPrefix(user.Foto, "http") {
+		// ****************************************************************
+		//! Decodificar la imagen en formato Base64
+		photoBytes, err := base64.StdEncoding.DecodeString(user.Foto)
+		if err != nil {
+			fmt.Println(err)
+			json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+			return
+		}
 
-	// ****************************************************************
-	//! Decodificar la imagen en formato Base64
-	photoBytes, err := base64.StdEncoding.DecodeString(user.Foto)
-	if err != nil {
-		fmt.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
-		return
-	}
+		//! Get user_id from database
+		var userID string
+		err = db.QueryRow("SELECT id FROM usuario WHERE username=?", user.Lastusuario).Scan(&userID)
+		if err != nil {
+			fmt.Println(err)
+			json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+			return
+		}
 
-	//! Get user_id from database
-	var userID string
-	err = db.QueryRow("SELECT id FROM usuario WHERE username=?", user.Lastusuario).Scan(&userID)
-	if err != nil {
-		fmt.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
-		return
-	}
+		//! Get album_id from database
+		var albumID string
+		err = db.QueryRow("SELECT id FROM album WHERE name_album=? AND usuario_id =?", fmt.Sprintf("%s_album", user.Lastusuario), userID).Scan(&albumID)
+		if err != nil {
+			fmt.Println(err)
+			json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+			return
+		}
 
-	//! Get album_id from database
-	var albumID string
-	err = db.QueryRow("SELECT id FROM album WHERE name_album=? AND usuario_id =?", fmt.Sprintf("%s_album", user.Lastusuario), userID).Scan(&albumID)
-	if err != nil {
-		fmt.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
-		return
-	}
+		//! Crear un objeto "bytes.Reader" para leer los bytes de la imagen
+		photoReader := bytes.NewReader(photoBytes)
+		var photocontID string
+		err = db.QueryRow("SELECT COUNT(*) FROM fotos WHERE album_id=?", albumID).Scan(&photocontID)
+		if err != nil {
+			fmt.Println(err)
+			json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+			return
+		}
+		// TODO: PARAMETROS DE KEYNAME(url) =  "Fotos_Perfil/[usuario]_ID.jpg"
+		keyName := fmt.Sprintf("Fotos_Perfil/%s_%s.jpg", user.Usuario, photocontID)
 
-	//! Crear un objeto "bytes.Reader" para leer los bytes de la imagen
-	photoReader := bytes.NewReader(photoBytes)
-	var photocontID string
-	err = db.QueryRow("SELECT COUNT(*) FROM fotos WHERE album_id=?", albumID).Scan(&photocontID)
-	if err != nil {
-		fmt.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
-		return
-	}
-	// TODO: PARAMETROS DE KEYNAME(url) =  "Fotos_Perfil/[usuario]_ID.jpg"
-	keyName := fmt.Sprintf("Fotos_Perfil/%s_%s.jpg", user.Usuario, photocontID)
+		region := "us-east-2"
+		//! create a new S3 client
+		s3Client := NewS3Client(region)
+		// ! Subir la imagen a S3
+		err = s3Client.UploadFile(photoReader, keyName)
+		if err != nil {
+			fmt.Println(err)
+			json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+			return
+		}
+		// ****************************************************************
+		user.Foto = fmt.Sprintf("https://practica1-g8-imagenes.s3.amazonaws.com/%s", keyName)
 
-	region := "us-east-2"
-	//! create a new S3 client
-	s3Client := NewS3Client(region)
-	// ! Subir la imagen a S3
-	err = s3Client.UploadFile(photoReader, keyName)
-	if err != nil {
-		fmt.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
-		return
+		//! Agregar la foto que se guarda en el album del usuario
+		stmt, err := db.Prepare("INSERT INTO fotos(name_photo, photo_link, album_id) VALUES(?, ?, ?)")
+		if err != nil {
+			fmt.Println(err)
+			json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+			return
+		}
+		_, err = stmt.Exec(fmt.Sprintf("%s_%s", user.Usuario, photocontID), user.Foto, albumID)
+		if err != nil {
+			json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+			return
+		}
 	}
-	// ****************************************************************
-	user.Foto = fmt.Sprintf("https://practica1-g8-imagenes.s3.amazonaws.com/%s", keyName)
-
-	//! Agregar la foto que se guarda en el album del usuario
-	stmt, err := db.Prepare("INSERT INTO fotos(name_photo, photo_link, album_id) VALUES(?, ?, ?)")
-	if err != nil {
-		fmt.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
-		return
-	}
-	_, err = stmt.Exec(fmt.Sprintf("%s_%s", user.Usuario, photocontID), user.Foto, albumID)
-	if err != nil {
-		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
-		return
-	}
-
 	//! Se  actualiza a la tabla de usuarios username, name, photo
 	stmt, err2 := db.Prepare("UPDATE usuario SET username = ?, name = ?, photo = ? WHERE username = ?")
 	if err2 != nil {
