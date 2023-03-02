@@ -45,7 +45,7 @@ export class BackendService {
     return this.http.put(`${this.URL}/modificaAlbum`, cuerpo);
   }
 
-  eliminaAlbum(id: any) {
-    return this.http.delete(`${this.URL}/eliminaAlbum/${id}`);
+  eliminaAlbum(usuario: any, namealbum: any) {
+    return this.http.delete(`${this.URL}/eliminaAlbum/${usuario}/${namealbum}`);
   }
 }

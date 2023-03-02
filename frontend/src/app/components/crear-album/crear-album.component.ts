@@ -11,13 +11,16 @@ import Swal from 'sweetalert2'
 })
 export class CrearAlbumComponent implements OnInit {
 
-  constructor(private backend: BackendService, private router: Router) { }
+  constructor(private backend: BackendService, private router: Router) { 
+    this.cuerpo.Lastusuario = sessionStorage.getItem('usuario')
+  }
 
   ngOnInit(): void {
   }
 
   cuerpo: any = {
-    Album: ''
+    Album: '',
+    Lastusuario: ''
   }
 
   cAlbum() {

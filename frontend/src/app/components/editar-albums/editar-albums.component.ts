@@ -57,8 +57,15 @@ export class EditarAlbumsComponent implements OnInit {
       return
     }
 
+    var c = 0
+    this.jsalbums.forEach( () => {
+      if (this.jsalbums[c].Id == this.cuerpo.Id){
+        this.cuerpo.Lastalbum = this.jsalbums[c].Nombre
+      }
+      c++
+    });
 
-    this.backend.eliminaAlbum(this.cuerpo.Id).subscribe(
+    this.backend.eliminaAlbum(sessionStorage.getItem('usuario') , this.cuerpo.Lastalbum).subscribe(
       res => {
         const resp = JSON.parse(JSON.stringify(res))
         if (resp.Res) {

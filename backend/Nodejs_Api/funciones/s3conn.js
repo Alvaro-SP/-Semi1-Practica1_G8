@@ -16,7 +16,8 @@ var s3 = new AWS.S3(
 
 const uploadPhotoprofile = async (data) => {
     try {
-        var name = `Foto_Perfil/${data.Usuario}.jpg`;
+        var name = `Fotos_Perfil/${data.Usuario}.jpg`;
+        //console.log(data.Foto)
         let buffer = new Buffer.from(data.Foto, "base64");
         var params = {
             Bucket: process.env.AWS_BUCKET_NAME,
@@ -46,7 +47,7 @@ const uploadPhotoprofile = async (data) => {
 
 const uploadPhotopic = async (data) => {
     try {
-        var name = `Foto_Perfil/${data.Lastusuario}_${data.Album}_${data.NamePhoto}.jpg`;
+        var name = `Fotos_Publicadas/${data.Lastusuario}_${data.Album}_${data.NamePhoto}.jpg`;
         let buffer = new Buffer.from(data.Foto, "base64");
         var params = {
             Bucket: process.env.AWS_BUCKET_NAME,

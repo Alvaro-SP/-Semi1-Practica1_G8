@@ -14,7 +14,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -44,7 +44,7 @@ app.put('/subirFoto', jsonParser,(req, res) => uploadfoto(req, res));
 
 app.post('/crearAlbum', jsonParser,(req, res) => crearAlbum(req, res));
 
-app.get('/getAlbums:usuario', jsonParser,(req, res) => getAlbumsUser(req, res));
+app.get('/getAlbums/:usuario', jsonParser,(req, res) => getAlbumsUser(req, res));
 
 app.put('/modificaAlbum', jsonParser,(req, res) => changeAlbums(req, res));
 

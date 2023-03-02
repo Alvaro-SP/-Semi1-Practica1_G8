@@ -121,8 +121,7 @@ const infouser = async (req, res) => {
                     res.jsonp({
                         Usuario: result[0].username,
                         Nombre: result[0].name,
-                        Foto: result[0].photo,
-                        Res: true
+                        Foto: result[0].photo,                        
                     })
                 } else {
                     res.jsonp({ Res: false })
@@ -143,6 +142,7 @@ const actualizaInfo = async (req, res) => {
     const Foto = data.Foto;
     const Password = md5(data.Password);
     const username = data.Lastusuario;
+    //console.log(data)
     try {
         var sql = `SELECT id, username, name, photo FROM usuario WHERE username = '${username}' AND password = '${Password}'`
         console.log(sql)
@@ -298,7 +298,7 @@ const getAlbumsUser= async (req, res) => {
                 if(result.length == 1){
                     const iduser = result[0].id
 
-                    var sql2 = `SELECT id as ID, name_album as Nombre FROM album WHERE usuario_id = ${iduser} AND name_album <> 'fotos de perfil'`
+                    var sql2 = `SELECT id as Id, name_album as Nombre FROM album WHERE usuario_id = ${iduser}`
                     console.log(sql2)
                     
                     con.query(sql2, function (err, resultalbum, fields) {
@@ -321,7 +321,8 @@ const getAlbumsUser= async (req, res) => {
 const changeAlbums= async (req, res) => {
     const data = req.body;
     try {
-        var sql3 = `UPDATE album SET name_album = '${data.Album}' WHERE id =  ${data.ID};`
+        var sql3 = `UPDATE album SET name_album = '${data.Album}' WHERE id =  ${data.Id};`
+        console.log(sql3)
         con.query(sql3, function (err, resultaalter, fields) {
             if (err) { res.jsonp({ Res: false }) }
             res.jsonp({ Res: true })
@@ -419,7 +420,7 @@ const getFotosUser = async (req, res) => {
 
                 var sql3 = `select fotos.id, name_photo, photo_link, album_id, name_album from (fotos 
                     inner join album on album.id = fotos.album_id) 
-                    where album.usuario_id = ${iduser}  AND album.name_album <> 'fotos de perfil'
+                    where album.usuario_id = ${iduser}  
                     order by album.name_album;`
                 con.query(sql3, function (err, resultalbum, fields) {
                     const listaalbumes = []
