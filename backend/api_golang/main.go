@@ -9,6 +9,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/rs/cors"
+
 	// "encoding/base64"
 	"encoding/base64"
 	"encoding/hex"
@@ -17,7 +19,8 @@ import (
 
 	// "io/ioutil"
 	"net/http"
-	// "strconv"
+	"strconv"
+
 	// "strings"
 	// "time"
 
@@ -27,6 +30,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	_ "github.com/rs/cors"
 )
 
 var (
@@ -134,7 +138,7 @@ func obtenerBaseDeDatos() (db *sql.DB, e error) {
 // !		 █▄▄ █▄█ █▄█ █ █░▀█
 func login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	// Parsea el cuerpo de la solicitud
 	var credenciales struct {
@@ -182,7 +186,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 // !		 █▀▄ ██▄ █▄█ █ ▄█ ░█░ █▀▄ █▄█
 func registro(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var user Usuario
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -202,9 +206,9 @@ func registro(w http.ResponseWriter, r *http.Request) {
 	}
 	//! Crear un objeto "bytes.Reader" para leer los bytes de la imagen
 	photoReader := bytes.NewReader(photoBytes)
-
-	// TODO: PARAMETROS DE KEYNAME(url) =  "Fotos_Perfil/[usuario].jpg"
-	keyName := fmt.Sprintf("Fotos_Perfil/%s.jpg", user.Usuario)
+	contador := 0
+	// TODO: PARAMETROS DE KEYNAME(url) =  "Fotos_Perfil/[usuario]_id.jpg"
+	keyName := fmt.Sprintf("Fotos_Perfil/%s_%s.jpg", user.Usuario, strconv.Itoa(contador))
 
 	region := "us-east-2"
 	//! create a new S3 client
@@ -246,13 +250,21 @@ func registro(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// ! here only the first album with the first ID will name "user's album".
-	res, err = stmt.Exec(fmt.Sprintf("%s's album", user.Nombre), userID)
+	res, err = stmt.Exec(fmt.Sprintf("%s_album", user.Usuario), userID)
 	if err != nil {
 		fmt.Println(err)
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
 	albumID, err := res.LastInsertId()
+
+	var photocontID string
+	err = db.QueryRow("SELECT COUNT(*) FROM fotos WHERE album_id=?", albumID).Scan(&photocontID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
 	//! Agregar la foto que se guarda en el album del usuario
 	stmt, err = db.Prepare("INSERT INTO fotos(name_photo, photo_link, album_id) VALUES(?, ?, ?)")
 	if err != nil {
@@ -260,7 +272,7 @@ func registro(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
-	_, err = stmt.Exec(fmt.Sprintf("%s_profile", user.Usuario), user.Foto, albumID)
+	_, err = stmt.Exec(fmt.Sprintf("%s_%s", user.Usuario, photocontID), user.Foto, albumID)
 	if err != nil {
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
@@ -276,7 +288,7 @@ func registro(w http.ResponseWriter, r *http.Request) {
 
 func infouser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	vars := mux.Vars(r)
 	usuario := vars["usuario"]
@@ -311,7 +323,7 @@ func infouser(w http.ResponseWriter, r *http.Request) {
 // !		 █▄█ █▀▀ █▄▀ █▀█ ░█░ ██▄
 func updateinfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json")
 	var user struct {
@@ -327,12 +339,13 @@ func updateinfo(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
-	fmt.Printf("%+v\n", user)
+	// fmt.Printf("%+v\n", user)
 	// ! se verifica la contrasena
 	hash := md5.Sum([]byte(user.Password))
 	// Convierte el resultado de md5.Sum a una cadena hexadecimal
 	hexHash := hex.EncodeToString(hash[:])
 	var count int
+
 	err = db.QueryRow("SELECT COUNT(*) FROM usuario WHERE username=? AND password=?", user.Lastusuario, hexHash).Scan(&count)
 	if err != nil {
 		fmt.Println("Credenciales incorrectas")
@@ -344,6 +357,7 @@ func updateinfo(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
+
 	// ****************************************************************
 	//! Decodificar la imagen en formato Base64
 	photoBytes, err := base64.StdEncoding.DecodeString(user.Foto)
@@ -352,11 +366,36 @@ func updateinfo(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
+
+	//! Get user_id from database
+	var userID string
+	err = db.QueryRow("SELECT id FROM usuario WHERE username=?", user.Lastusuario).Scan(&userID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+
+	//! Get album_id from database
+	var albumID string
+	err = db.QueryRow("SELECT id FROM album WHERE name_album=? AND usuario_id =?", fmt.Sprintf("%s_album", user.Lastusuario), userID).Scan(&albumID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+
 	//! Crear un objeto "bytes.Reader" para leer los bytes de la imagen
 	photoReader := bytes.NewReader(photoBytes)
-
-	// TODO: PARAMETROS DE KEYNAME(url) =  "Fotos_Perfil/[usuario].jpg"
-	keyName := fmt.Sprintf("Fotos_Perfil/%s.jpg", user.Usuario)
+	var photocontID string
+	err = db.QueryRow("SELECT COUNT(*) FROM fotos WHERE album_id=?", albumID).Scan(&photocontID)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	// TODO: PARAMETROS DE KEYNAME(url) =  "Fotos_Perfil/[usuario]_ID.jpg"
+	keyName := fmt.Sprintf("Fotos_Perfil/%s_%s.jpg", user.Usuario, photocontID)
 
 	region := "us-east-2"
 	//! create a new S3 client
@@ -370,6 +409,20 @@ func updateinfo(w http.ResponseWriter, r *http.Request) {
 	}
 	// ****************************************************************
 	user.Foto = fmt.Sprintf("https://practica1-g8-imagenes.s3.amazonaws.com/%s", keyName)
+
+	//! Agregar la foto que se guarda en el album del usuario
+	stmt, err := db.Prepare("INSERT INTO fotos(name_photo, photo_link, album_id) VALUES(?, ?, ?)")
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	_, err = stmt.Exec(fmt.Sprintf("%s_%s", user.Usuario, photocontID), user.Foto, albumID)
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+
 	//! Se  actualiza a la tabla de usuarios username, name, photo
 	stmt, err2 := db.Prepare("UPDATE usuario SET username = ?, name = ?, photo = ? WHERE username = ?")
 	if err2 != nil {
@@ -378,6 +431,20 @@ func updateinfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_, err = stmt.Exec(user.Usuario, user.Nombre, user.Foto, user.Lastusuario)
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+
+	//! Se  actualiza el nombre del album con el nuevo user
+	stmt, err2 = db.Prepare("UPDATE album SET name_album = ? WHERE name_album = ?")
+	if err2 != nil {
+		fmt.Println(err2)
+		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
+		return
+	}
+	_, err = stmt.Exec(fmt.Sprintf("%s_album", user.Lastusuario), fmt.Sprintf("%s_album", user.Usuario))
 	if err != nil {
 		fmt.Println(err)
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
@@ -393,7 +460,7 @@ func updateinfo(w http.ResponseWriter, r *http.Request) {
 // !		█▄█ █▀▀ █▄▄ █▄█ █▀█ █▄▀   █▀▀ █▀█ █▄█ ░█░ █▄█
 func uploadphoto(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json")
 	var user struct {
@@ -469,7 +536,7 @@ func uploadphoto(w http.ResponseWriter, r *http.Request) {
 // !		█▄▄ █▀▄ ██▄ █▀█ ░█░ ██▄   █▀█ █▄▄ █▄█ █▄█ █░▀░█
 func createalbum(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json")
 	var user struct {
@@ -509,7 +576,7 @@ func createalbum(w http.ResponseWriter, r *http.Request) {
 // !		█▄█ ██▄ ░█░   █▀█ █▄▄ █▄█ █▄█ █░▀░█
 func getalbum(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	vars := mux.Vars(r)
 	usuario := vars["usuario"]
@@ -553,7 +620,7 @@ func getalbum(w http.ResponseWriter, r *http.Request) {
 // !			 █░▀░█ █▄█ █▄▀ █ █▀░ ░█░   █▀█ █▄▄ █▄█ █▄█ █░▀░█
 func modifyAlbum(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json")
 	var user struct {
@@ -601,7 +668,7 @@ func modifyAlbum(w http.ResponseWriter, r *http.Request) {
 // !			█▄█ ██▄ ░█░   █▀█ █░▀█   █▀█ █▄▄ █▄█ █▄█ █░▀░█
 func getAlbumid(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	vars := mux.Vars(r)
 	usuario := vars["username"]
@@ -667,7 +734,7 @@ func getAlbumid(w http.ResponseWriter, r *http.Request) {
 // !			█▄▀ ██▄ █▄▄ ██▄ ░█░ ██▄   █▀█ █▄▄ █▄█ █▄█ █░▀░█
 func eliminaAlbum(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	vars := mux.Vars(r)
 	usuario := vars["username"]
@@ -712,7 +779,7 @@ func eliminaAlbum(w http.ResponseWriter, r *http.Request) {
 // !			▀▄▀ ██▄ █▀▄   █▀░ █▄█ ░█░ █▄█ ▄█
 func Veruserfotos(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	vars := mux.Vars(r)
 	usuario := vars["usuario"]
@@ -791,6 +858,18 @@ func main() {
 
 	// ! ********** RUTAS ***********
 	r := mux.NewRouter()
+	cors := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{
+			http.MethodPost,
+			http.MethodGet,
+			http.MethodPut,
+			http.MethodDelete,
+		},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: false,
+	})
+	handler := cors.Handler(r)
 	r.HandleFunc("/login", login).Methods("POST")
 	r.HandleFunc("/registro", registro).Methods("POST")
 	r.HandleFunc("/info/{usuario}", infouser).Methods("GET")
@@ -804,7 +883,11 @@ func main() {
 	r.HandleFunc("/verFotos/{usuario}", Veruserfotos).Methods("GET")
 
 	fmt.Println("Servidor iniciado CORRECTAMENTE")
-	err = http.ListenAndServe(":8080", r)
+	srv := http.Server{
+		Addr:    ":8080",
+		Handler: handler,
+	}
+	err = srv.ListenAndServe()
 	if err != nil {
 		fmt.Println(err)
 	}
