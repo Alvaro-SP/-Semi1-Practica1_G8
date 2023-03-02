@@ -108,12 +108,12 @@ type Usuario struct {
 }
 
 type Album struct {
-	ID     int    `json:"id"`
+	Id     int    `json:"Id"`
 	Nombre string `json:"Nombre"`
 }
 
 type Foto struct {
-	ID        int    `json:"id"`
+	Id        int    `json:"id"`
 	Name      string `json:"name"`
 	Link      string `json:"link"`
 	AlbumID   int    `json:"album_id"`
@@ -522,7 +522,7 @@ func uploadphoto(w http.ResponseWriter, r *http.Request) {
 	user.Foto = fmt.Sprintf("https://practica1-g8-imagenes.s3.amazonaws.com/%s", keyName)
 	// ****************************************************************
 	//! Insert new photo into database
-	_, err = db.Exec("INSERT INTO fotos(name_photo, photo_link, album_id) VALUES(?, ?, ?)", user.NamePhoto, "link", albumID)
+	_, err = db.Exec("INSERT INTO fotos(name_photo, photo_link, album_id) VALUES(?, ?, ?)", user.NamePhoto, user.Foto, albumID)
 	if err != nil {
 		fmt.Println(err)
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
@@ -625,9 +625,9 @@ func modifyAlbum(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json")
 	var user struct {
-		Album       string `json:"album"`
-		Lastusuario string `json:"lastusuario"`
-		Lastalbum   string `json:"lastalbum"`
+		Id        string `json:"id"`
+		Album     string `json:"album"`
+		Lastalbum string `json:"lastalbum"`
 	}
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -637,23 +637,15 @@ func modifyAlbum(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Printf("%+v\n", user)
 
-	//! Get user_id from database
-	var userID string
-	err = db.QueryRow("SELECT id FROM usuario WHERE username=?", user.Lastusuario).Scan(&userID)
-	if err != nil {
-		fmt.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
-		return
-	}
-
+	//update album set nombre_album where id=id
 	//! Se  actualiza a la tabla de usuarios username, name, photo
-	stmt, err2 := db.Prepare("UPDATE album SET name_album = ? WHERE usuario_id = ? AND name_album = ?")
+	stmt, err2 := db.Prepare("UPDATE album SET name_album = ? WHERE id =?")
 	if err2 != nil {
 		fmt.Println(err2)
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
 		return
 	}
-	_, err = stmt.Exec(user.Album, userID, user.Lastalbum)
+	_, err = stmt.Exec(user.Album, user.Id)
 	if err != nil {
 		fmt.Println(err)
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
@@ -876,7 +868,7 @@ func main() {
 	r.HandleFunc("/info/{usuario}", infouser).Methods("GET")
 	r.HandleFunc("/actualizaInfo", updateinfo).Methods("PUT")
 	r.HandleFunc("/subirFoto", uploadphoto).Methods("PUT")
-	r.HandleFunc("/crearAlbum", createalbum).Methods("PUT")
+	r.HandleFunc("/crearAlbum", createalbum).Methods("POST")
 	r.HandleFunc("/getAlbums/{usuario}", getalbum).Methods("GET")
 	r.HandleFunc("/modificaAlbum", modifyAlbum).Methods("PUT")
 	r.HandleFunc("/getAlbum/{username}/{idalbum}", getAlbumid).Methods("GET")

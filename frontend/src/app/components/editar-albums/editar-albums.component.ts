@@ -15,6 +15,10 @@ import Swal from 'sweetalert2'
 export class EditarAlbumsComponent implements OnInit {
 
   constructor(private backend: BackendService, private router: Router) { 
+    this.cargarInfo();
+   }
+
+   cargarInfo(){
     this.backend.getAlbums(sessionStorage.getItem("usuario")).subscribe(
       res => {
         this.jsalbums = res
@@ -74,6 +78,7 @@ export class EditarAlbumsComponent implements OnInit {
             icon: 'success',
             text: 'Se ha eliminado el album correctamente',
           })
+          this.cargarInfo()
         } else {
           Swal.fire({
             icon: 'error',
@@ -121,6 +126,7 @@ export class EditarAlbumsComponent implements OnInit {
             icon: 'success',
             text: 'Se ha modificado el album correctamente',
           })
+          this.cargarInfo()
         } else {
           Swal.fire({
             icon: 'error',
