@@ -32,10 +32,10 @@ const uploadPhotoprofile = async (data) => {
         };
         await s3.upload(params).promise();
         // Generate a URL for the uploaded object        
-        const url = s3.getSignedUrl('getObject', params2);
-        console.log("entra aqui")
+        //const url = s3.getSignedUrl('getObject', params2);
+        //console.log("entra aqui")
         console.log(`https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${name}`)
-        console.log(url)
+        //console.log(url)
         return `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${name}`;
     } catch (error) {
         console.log("error")

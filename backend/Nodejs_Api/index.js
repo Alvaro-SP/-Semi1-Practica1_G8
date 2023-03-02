@@ -2,7 +2,7 @@ import express from'express'
 const app = express();
 const PORT = 8080;
 import bodyParser from'body-parser'
-import { test, login, Registrar, infouser, uploadfoto } from './funciones/funciones.js'
+import { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser} from './funciones/funciones.js'
 
 var jsonParser = bodyParser.json()
  
@@ -38,20 +38,20 @@ app.post('/registro', jsonParser,(req, res) => Registrar(req, res));
 
 app.get('/info/:usuario', jsonParser,(req, res) => infouser(req, res));
 
-app.put('/actualizaInfo', jsonParser,(req, res) => login(req, res));
+app.put('/actualizaInfo', jsonParser,(req, res) => actualizaInfo(req, res));
 
 app.put('/subirFoto', jsonParser,(req, res) => uploadfoto(req, res));
 
-app.post('/crearAlbum', jsonParser,(req, res) => login(req, res));
+app.post('/crearAlbum', jsonParser,(req, res) => crearAlbum(req, res));
 
-app.get('/getAlbums:usuario', jsonParser,(req, res) => login(req, res));
+app.get('/getAlbums:usuario', jsonParser,(req, res) => getAlbumsUser(req, res));
 
-app.put('/modificaAlbum', jsonParser,(req, res) => login(req, res));
+app.put('/modificaAlbum', jsonParser,(req, res) => changeAlbums(req, res));
 
-app.get('/getAlbum/:username/:nameAlbum', jsonParser,(req, res) => login(req, res));
+app.get('/getAlbum/:username/:nameAlbum', jsonParser,(req, res) => getFotosAlbum(req, res));
 
-app.delete('/eliminaAlbum/:username/:nameAlbum', jsonParser,(req, res) => login(req, res));
+app.delete('/eliminaAlbum/:username/:nameAlbum', jsonParser,(req, res) => deleteAlbum(req, res));
 
-app.get('/verFotos/:usuario', jsonParser,(req, res) => login(req, res));
+app.get('/verFotos/:usuario', jsonParser,(req, res) => getFotosUser(req, res));
 
 app.listen(PORT || process.env.PORT )
