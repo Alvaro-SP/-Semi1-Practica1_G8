@@ -66,7 +66,6 @@
 
 ---
 
->“Programa Orquestado en Docker-compose.”
 ## <a name="intro" ></a>ÍNDICE
 | Topico | Link |
 | ------ | ------ |
@@ -201,6 +200,35 @@ Utilizado para almacenar  los usuarios, albumes y fotos.
 - Balanceador de carga configurado con seguridad de grupos y las instancias configuradas en 50%.
 
 ![a](assets/bl1.jpg)
+
+
+### Configuracion de S3 Bucket para Pagina web Estatica
+- Acceder a la consola de AWS con el usuario IAM con permisos de S3 e ir a dicha consola.
+
+![a](assets/s3_1.png)
+
+- Crear el bucket con el nombre *practica1-g8-paginaweb*
+
+![a](assets/s3_2.png)
+
+- Desactivar la opcion de *Bloquear todo el acceso publico*
+
+![a](assets/s3_3.png)
+
+- Subir los objetos al bucket
+
+![a](assets/s3_4.png)
+
+- Configurar *alojamiento de sitios web estaticos*
+
+![a](assets/s3_5.png)
+
+- En la pestaña de permisos, colocar la politica del bucket
+
+![a](assets/s3_6.png)
+
+- Para acceder se utiliza el link generado en la seccion de *alojamiento de sitios web estaticos* 
+![a](assets/s3_7.png)
 
 
 ## Tecnologias utilizadas
