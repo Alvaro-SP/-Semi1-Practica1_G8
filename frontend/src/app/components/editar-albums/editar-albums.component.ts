@@ -24,7 +24,11 @@ export class EditarAlbumsComponent implements OnInit {
         this.jsalbums = res
       },
       err => {
-        alert("Ocurrio un error")
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Ocurrio un Error!',
+        })
       }
     )
    }

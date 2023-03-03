@@ -20,7 +20,11 @@ export class EditarPerfilComponent implements OnInit {
       res => {
         var js = JSON.stringify(res)
         if (js.includes("Res")) {
-          alert("Inicie sesion nuevamente para poder acceder")
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Inicie sesion nuevamente!',
+          })
           sessionStorage.removeItem("usuario")
           this.router.navigate(['login'])
         } else {
@@ -31,7 +35,11 @@ export class EditarPerfilComponent implements OnInit {
         }
       },
       err => {
-        alert("Ocurrio un error")
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Ocurrio un error!',
+        })
       }
     )
   }
@@ -127,7 +135,7 @@ export class EditarPerfilComponent implements OnInit {
       },
       allowOutsideClick: () => !Swal.isLoading()
     }).then(() => {
-
+      let backupFoto=this.cuerpo.Foto
       try{
         if (!this.cuerpo.Foto.includes("http")){
           let auxArr = this.cuerpo.Foto.split(",", 2)
@@ -161,6 +169,7 @@ export class EditarPerfilComponent implements OnInit {
             })
             this.cuerpo.Password = ""
           }
+          this.cuerpo.Foto=backupFoto
         },
         err => {
           Swal.fire({

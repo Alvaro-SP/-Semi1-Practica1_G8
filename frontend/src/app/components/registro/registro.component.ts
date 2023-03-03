@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { WebcamImage } from 'ngx-webcam';
 import { Observable, Subject } from 'rxjs';
 import { BackendService } from 'src/app/services/backend.service';
-
+import Swal from 'sweetalert2'
 @Component({
   selector: 'app-registro',
   templateUrl: './registro.component.html',
@@ -73,11 +73,19 @@ export class RegistroComponent implements OnInit {
 
   Registrar() {
     if (this.cuerpo.Usuario == "" || this.cuerpo.Nombre == "" || this.cuerpo.Password == "" || this.cuerpo.Foto == "") {
-      alert("Complete todos los campos del registro!")
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Complete todos los campos!',
+      })
       return
     }
     if (this.confirmPass != this.cuerpo.Password) {
-      alert("Las contraseñas deben de coincidir")
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Las password no coinciden!',
+      })
       return
     }
     let auxArr = this.cuerpo.Foto.split(",", 2)
@@ -88,7 +96,11 @@ export class RegistroComponent implements OnInit {
         if (resp.Res) {
           this.router.navigate(['login'])
         } else {
-          alert("Usuario ya existente!")
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Nombre de usuario ya existente, cree uno nuevo!',
+          })
           this.cuerpo.Usuario = ""
           this.cuerpo.Password = ""
           this.cuerpo.foto = ""
@@ -98,7 +110,11 @@ export class RegistroComponent implements OnInit {
         }
       },
       err => {
-        alert("Ocurrio un error")
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Ocurrio un error!',
+        })
       }
     )
 
