@@ -1,0 +1,151 @@
+<app-menu></app-menu>
+<div class="divSubir">
+  <div class="text-center">
+    <p class="fs-1" style="color: white">
+      <b>Subir fotografía</b>
+    </p>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col">
+      <div class="mx-auto" style="width: 80%">
+        <label
+          for="exampleFormControlInput1"
+          class="form-label"
+          style="color: white"
+          >Nombre de la imagen</label
+        >
+        <input
+          type="text"
+          class="form-control"
+          id="exampleFormControlInput1"
+          placeholder="Name photo"
+          [(ngModel)]="this.cuerpo.NamePhoto"
+          [ngModelOptions]="{ standalone: true }"
+        />
+        <label
+          for="exampleFormControlTextarea1"
+          class="form-label"
+          style="color: white"
+          >Foto</label
+        >
+        <input
+          type="file"
+          class="form-control"
+          id="inputGroupFile01"
+          accept="image/*"
+          #ImageInput
+          [(ngModel)]="img"
+          (change)="onImageUpload()"
+        />
+
+        <br />
+
+        <div>
+          <div class="row">
+            <div class="col" *ngIf="showWebcam">
+              <div><h3 style="color: white">Cámara</h3></div>
+              <webcam
+                class="frameCamara"
+                [height]="300"
+                [width]="300"
+                [trigger]="triggerObservable"
+                (imageCapture)="handleImage($event)"
+                [mirrorImage]="'never'"
+              ></webcam>
+            </div>
+            <div class="col" *ngIf="hayFoto">
+              <div><h3 style="color: white">Tu foto</h3></div>
+              <div class="snapshot frameFoto">
+                <img [src]="this.cuerpo.Foto" [height]="225" [width]="300" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="row">
+            <div class="col divBotones">
+              <button
+                type="submit"
+                class="bt btn-primary btn-lg"
+                style="background-color: #242c3c"
+                (click)="toggleWebcam()"
+              >
+                Encender Camara
+              </button>
+            </div>
+            <div class="col divBotones">
+              <button
+                type="submit"
+                class="bt btn-primary btn-lg"
+                style="background-color: #242c3c"
+                [disabled]="!showWebcam"
+                (click)="triggerSnapshot()"
+              >
+                Tomar foto
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col"></div>
+    <div class="col">
+      <div class="d-grid gap-2">
+        <select
+          class="form-select custom-select select-selected"
+          aria-label="Default select example"
+          [(ngModel)]="this.selectAlbum"
+        >
+          <ng-container *ngFor="let album of jsalbums">
+            <option class="select-items" value="{{ album.Nombre }}">
+              {{ album.Nombre }}
+            </option>
+          </ng-container>
+        </select>
+      </div>
+    </div>
+    <div class="col"></div>
+  </div>
+
+  <div class="row">
+    <div class="col"></div>
+    <div class="col">
+      <div class="d-grid gap-2">
+        <button
+          type="submit"
+          class="bt btn-primary btn-lg"
+          style="background-color: #fc9c1c; margin: 30px"
+          (click)="subir()"
+        >
+          <!---->
+          Submit
+        </button>
+      </div>
+    </div>
+    <div class="col"></div>
+  </div>
+
+  <div class="row" *ngIf="!this.habilitarCreacion">
+    <button
+      type="button"
+      class="btn btn-link"
+      (click)="habilitaCreacion()"
+      style="margin-bottom: 30px"
+    >
+      ¿Quieres crear un nuevo álbum?
+    </button>
+  </div>
+
+  <div class="row" *ngIf="this.habilitarCreacion">
+    <button type="button" class="btn btn-link" (click)="habilitaCreacion()">
+      Ocultar
+    </button>
+  </div>
+
+  <app-crear-album *ngIf="this.habilitarCreacion"></app-crear-album>
+</div>

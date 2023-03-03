@@ -1,0 +1,138 @@
+<app-menu></app-menu>
+<div
+  style="
+    background-color: #3c464c;
+    margin: auto;
+    width: 85%;
+    height: auto;
+    margin-top: 5%;
+    margin-bottom: 5%;
+  "
+>
+  <div class="text-center">
+    <p class="fs-1" style="color: white">
+      <b>Editar Perfil</b>
+    </p>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col">
+      <div class="mx-auto" style="width: 80%">
+        <div class="mb-3">
+          <label
+            for="exampleFormControlInput1"
+            class="form-label"
+            style="color: white"
+            >Usuario</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            id="exampleFormControlInput1"
+            placeholder="your user"
+            [(ngModel)]="this.cuerpo.Usuario"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+        <div class="mb-3">
+          <label
+            for="exampleFormControlInput1"
+            class="form-label"
+            style="color: white"
+            >Nombre Completo</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            id="exampleFormControlInput2"
+            placeholder="your name"
+            [(ngModel)]="this.cuerpo.Nombre"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+        <div><h3 style="color: white">Tu foto</h3></div>
+        <div class="snapshot frameFoto">
+          <img [src]="this.cuerpo.Foto" [height]="250" [width]="300" />
+        </div>
+        <div class="snapshot frameFoto">
+          <button
+            type="submit"
+            class="bt btn-primary btn-lg"
+            style="background-color: #242c3c"
+            (click)="cFoto()"
+          >
+            Cambiar fotografía
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col" *ngIf="this.cambiarFoto">
+      <div class="mb-3" style="width: 95%">
+        <label
+          for="exampleFormControlTextarea1"
+          class="form-label"
+          style="color: white"
+          >Foto</label
+        >
+        <input
+          type="file"
+          class="form-control"
+          id="inputGroupFile01"
+          accept="image/*"
+          #ImageInput
+          [(ngModel)]="img"
+          (change)="onImageUpload()"
+        />
+
+        <br />
+
+        <webcam
+          [height]="300"
+          [width]="300"
+          [trigger]="triggerObservable"
+          (imageCapture)="handleImage($event)"
+          *ngIf="showWebcam"
+          [mirrorImage]="'never'"
+        ></webcam>
+        <div class="d-grid gap-2">
+          <button
+            type="submit"
+            class="bt btn-primary btn-lg"
+            style="background-color: #242c3c"
+            (click)="toggleWebcam()"
+          >
+            Encender Camara
+          </button>
+        </div>
+        <div class="d-grid gap-2">
+          <button
+            type="submit"
+            class="bt btn-primary btn-lg"
+            style="background-color: #242c3c"
+            [disabled]="!showWebcam"
+            (click)="triggerSnapshot()"
+          >
+            Tomar foto
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col"></div>
+    <div class="col">
+      <div class="d-grid gap-2">
+        <button
+          type="submit"
+          class="bt btn-primary btn-lg"
+          style="background-color: #fc9c1c; margin: 30px"
+          (click)="Registrar()"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+    <div class="col"></div>
+  </div>
+</div>

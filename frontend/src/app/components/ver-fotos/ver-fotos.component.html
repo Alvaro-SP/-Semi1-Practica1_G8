@@ -1,0 +1,10 @@
+<app-menu></app-menu>
+<div style="background-color:#3c464c; margin: auto; width: 85%; height: auto; margin-top: 5%; margin-bottom: 5%;">
+    <br>
+    <div class="text-center" *ngFor="let da of this.cuerpo" style="margin: auto; width: 55%; ">
+        <app-album [nombre]="da.Nombre" [fotos]="da.Fotos"></app-album>
+        <br>
+        <br>
+    </div>
+    <br>
+</div>
