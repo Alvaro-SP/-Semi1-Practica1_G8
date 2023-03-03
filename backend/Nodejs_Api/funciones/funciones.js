@@ -418,10 +418,11 @@ const getFotosUser = async (req, res) => {
             else {
                 const iduser = result[0].id
 
-                var sql3 = `select fotos.id, name_photo, photo_link, album_id, name_album from (fotos 
-                    inner join album on album.id = fotos.album_id) 
-                    where album.usuario_id = ${iduser}  
-                    order by album.name_album;`
+                var sql3 = `SELECT a.id, a.name_album, COALESCE(f.photo_link, '') AS photo_link 
+FROM (album a LEFT JOIN fotos f ON a.id = f.album_id) 
+WHERE a.usuario_id = ${iduser}
+order by a.name_album;`
+                console.log(sql3)
                 con.query(sql3, function (err, resultalbum, fields) {
                     const listaalbumes = []
                     const listasend = []

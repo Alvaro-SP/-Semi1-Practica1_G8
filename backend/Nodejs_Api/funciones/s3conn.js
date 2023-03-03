@@ -6,9 +6,9 @@ dotenv.config()
 
 var s3 = new AWS.S3(
     {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        region: process.env.AWS_REGION
+        accessKeyId: 'AKIA2R37HQXTCPY4WGSF',
+        secretAccessKey: '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',
+        region: 'us-east-2'
     }
 )
 
@@ -20,13 +20,13 @@ const uploadPhotoprofile = async (data) => {
         //console.log(data.Foto)
         let buffer = new Buffer.from(data.Foto, "base64");
         var params = {
-            Bucket: process.env.AWS_BUCKET_NAME,
+            Bucket: 'practica1-g8-imagenes',
             Key: name,
             Body: buffer,
             ContentType: "image/jpeg",
         };        
         var params2 = {
-            Bucket: process.env.AWS_BUCKET_NAME,
+            Bucket: 'practica1-g8-imagenes',
             Key: name,
             //Body: buffer,
             //ContentType: "image/jpeg",
@@ -35,9 +35,9 @@ const uploadPhotoprofile = async (data) => {
         // Generate a URL for the uploaded object        
         //const url = s3.getSignedUrl('getObject', params2);
         //console.log("entra aqui")
-        console.log(`https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${name}`)
+        console.log(`https://practica1-g8-imagenes.s3.amazonaws.com/${name}`)
         //console.log(url)
-        return `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${name}`;
+        return `https://practica1-g8-imagenes.s3.amazonaws.com/${name}`;
     } catch (error) {
         console.log("error")
         return error;
@@ -50,13 +50,13 @@ const uploadPhotopic = async (data) => {
         var name = `Fotos_Publicadas/${data.Lastusuario}_${data.Album}_${data.NamePhoto}.jpg`;
         let buffer = new Buffer.from(data.Foto, "base64");
         var params = {
-            Bucket: process.env.AWS_BUCKET_NAME,
+            Bucket: 'practica1-g8-imagenes',
             Key: name,
             Body: buffer,
             ContentType: "image/jpeg",
         };        
         var params2 = {
-            Bucket: process.env.AWS_BUCKET_NAME,
+            Bucket: 'practica1-g8-imagenes',
             Key: name,
             //Body: buffer,
             //ContentType: "image/jpeg",
@@ -65,9 +65,9 @@ const uploadPhotopic = async (data) => {
         // Generate a URL for the uploaded object        
         const url = s3.getSignedUrl('getObject', params2);
         //console.log("entra aqui")
-        //console.log(`https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${name}`)
+        //console.log(`https://${'practica1-g8-imagenes'}.s3.amazonaws.com/${name}`)
         console.log(url)
-        return `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${name}`;
+        return `https://practica1-g8-imagenes.s3.amazonaws.com/${name}`;
     } catch (error) {
         console.log("error")
         return error;
@@ -78,7 +78,7 @@ const deletePhoto = async (data) => {
     try {
         var name = `${data.user}-${data.name}.jpg`;
         var params = {
-            Bucket: process.env.AWS_BUCKET_NAME,
+            Bucket: 'practica1-g8-imagenes',
             Key: name,
         };
         await s3.deleteObject(params).promise();
