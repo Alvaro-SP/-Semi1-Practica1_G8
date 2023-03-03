@@ -1,5 +1,5 @@
-# -Semi1-Practica1_G11
-Amazon Web Services (AWS) es una plataforma de servicios de nube que ofrece potencia de cómputo, almacenamiento de bases de datos, entrega de contenido y otra funcionalidad para ayudar a las empresas a escalar y crecer.
+# -Semi1-Practica1_G8
+
 <p>UNIVERSIDAD DE SAN CARLOS DE GUATEMALA</p>
 <p>FACULTAD DE INGENIERIA</p>
 <p>ESCUELA DE CIENCIAS Y SISTEMAS</p>
@@ -84,7 +84,7 @@ Amazon Web Services (AWS) es una plataforma de servicios de nube que ofrece pote
 
 ## <a name="intro" ></a>INTRODUCCIÓN
 
-Esta documentación describe la implementación de una aplicación de calculadora básica utilizando React para la interfaz de usuario, Golang para el back-end, y MySQL para almacenar los registros de operaciones. Además, se utilizó Docker Compose para orquestar la aplicación y se creó un contenedor en Alpine para ejecutar un script que muestra los reportes solicitados.
+Amazon Web Services (AWS) es una plataforma de servicios de nube que ofrece potencia de cómputo, almacenamiento de bases de datos, entrega de contenido y otra funcionalidad para ayudar a las empresas a escalar y crecer.
 
 ## Objetivos
 
