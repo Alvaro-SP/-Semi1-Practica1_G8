@@ -205,30 +205,30 @@ Utilizado para almacenar  los usuarios, albumes y fotos.
 ### Configuracion de S3 Bucket para Pagina web Estatica
 - Acceder a la consola de AWS con el usuario IAM con permisos de S3 e ir a dicha consola.
 
-![a](assets/s3_1.png)
+![a](assets/s3_1.PNG)
 
 - Crear el bucket con el nombre *practica1-g8-paginaweb*
 
-![a](assets/s3_2.png)
+![a](assets/s3_2.PNG)
 
 - Desactivar la opcion de *Bloquear todo el acceso publico*
 
-![a](assets/s3_3.png)
+![a](assets/s3_3.PNG)
 
 - Subir los objetos al bucket
 
-![a](assets/s3_4.png)
+![a](assets/s3_4.PNG)
 
 - Configurar *alojamiento de sitios web estaticos*
 
-![a](assets/s3_5.png)
+![a](assets/s3_5.PNG)
 
 - En la pestaña de permisos, colocar la politica del bucket
 
-![a](assets/s3_6.png)
+![a](assets/s3_6.PNG)
 
 - Para acceder se utiliza el link generado en la seccion de *alojamiento de sitios web estaticos* 
-![a](assets/s3_7.png)
+![a](assets/s3_7.PNG)
 
 
 ## Tecnologias utilizadas
