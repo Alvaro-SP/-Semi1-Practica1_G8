@@ -788,7 +788,7 @@ func Veruserfotos(w http.ResponseWriter, r *http.Request) {
 
 	//! Create a map of albums with their photos
 	albums := make(map[string][]string) //* smoke this query >:v
-	rows, err := db.Query("SELECT a.id, a.name_album, f.photo_link FROM album a INNER JOIN fotos f ON a.id = f.album_id WHERE a.usuario_id=?", userID)
+	rows, err := db.Query("SELECT a.id, a.name_album, COALESCE(f.photo_link, '') AS photo_link FROM album a LEFT JOIN fotos f ON a.id = f.album_id WHERE a.usuario_id =?", userID)
 	if err != nil {
 		fmt.Println(err)
 		json.NewEncoder(w).Encode(map[string]bool{"Res": false})
