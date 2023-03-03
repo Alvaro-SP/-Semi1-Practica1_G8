@@ -139,7 +139,7 @@ func obtenerBaseDeDatos() (db *sql.DB, e error) {
 // !		 █▄▄ █▄█ █▄█ █ █░▀█
 func login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	// Parsea el cuerpo de la solicitud
 	var credenciales struct {
@@ -187,7 +187,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 // !		 █▀▄ ██▄ █▄█ █ ▄█ ░█░ █▀▄ █▄█
 func registro(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var user Usuario
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -289,7 +289,7 @@ func registro(w http.ResponseWriter, r *http.Request) {
 
 func infouser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	vars := mux.Vars(r)
 	usuario := vars["usuario"]
@@ -324,7 +324,7 @@ func infouser(w http.ResponseWriter, r *http.Request) {
 // !		 █▄█ █▀▀ █▄▀ █▀█ ░█░ ██▄
 func updateinfo(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json")
 	var user struct {
@@ -461,7 +461,7 @@ func updateinfo(w http.ResponseWriter, r *http.Request) {
 // !		█▄█ █▀▀ █▄▄ █▄█ █▀█ █▄▀   █▀▀ █▀█ █▄█ ░█░ █▄█
 func uploadphoto(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json")
 	var user struct {
@@ -537,7 +537,7 @@ func uploadphoto(w http.ResponseWriter, r *http.Request) {
 // !		█▄▄ █▀▄ ██▄ █▀█ ░█░ ██▄   █▀█ █▄▄ █▄█ █▄█ █░▀░█
 func createalbum(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json")
 	var user struct {
@@ -577,7 +577,7 @@ func createalbum(w http.ResponseWriter, r *http.Request) {
 // !		█▄█ ██▄ ░█░   █▀█ █▄▄ █▄█ █▄█ █░▀░█
 func getalbum(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	vars := mux.Vars(r)
 	usuario := vars["usuario"]
@@ -621,7 +621,7 @@ func getalbum(w http.ResponseWriter, r *http.Request) {
 // !			 █░▀░█ █▄█ █▄▀ █ █▀░ ░█░   █▀█ █▄▄ █▄█ █▄█ █░▀░█
 func modifyAlbum(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json")
 	var user struct {
@@ -661,7 +661,7 @@ func modifyAlbum(w http.ResponseWriter, r *http.Request) {
 // !			█▄█ ██▄ ░█░   █▀█ █░▀█   █▀█ █▄▄ █▄█ █▄█ █░▀░█
 func getAlbumid(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	vars := mux.Vars(r)
 	usuario := vars["username"]
@@ -727,7 +727,7 @@ func getAlbumid(w http.ResponseWriter, r *http.Request) {
 // !			█▄▀ ██▄ █▄▄ ██▄ ░█░ ██▄   █▀█ █▄▄ █▄█ █▄█ █░▀░█
 func eliminaAlbum(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	vars := mux.Vars(r)
 	usuario := vars["username"]
@@ -772,7 +772,7 @@ func eliminaAlbum(w http.ResponseWriter, r *http.Request) {
 // !			▀▄▀ ██▄ █▀▄   █▀░ █▄█ ░█░ █▄█ ▄█
 func Veruserfotos(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	vars := mux.Vars(r)
 	usuario := vars["usuario"]
