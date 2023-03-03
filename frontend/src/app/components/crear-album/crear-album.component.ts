@@ -1,8 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { BackendService } from 'src/app/services/backend.service';
 
 import Swal from 'sweetalert2'
+import { EditarAlbumsComponent } from '../editar-albums/editar-albums.component';
 
 @Component({
   selector: 'app-crear-album',
@@ -11,7 +11,7 @@ import Swal from 'sweetalert2'
 })
 export class CrearAlbumComponent implements OnInit {
 
-  constructor(private backend: BackendService, private router: Router) { 
+  constructor(private backend: BackendService,private mm:EditarAlbumsComponent ) { 
     this.cuerpo.Lastusuario = sessionStorage.getItem('usuario')
   }
 
@@ -41,6 +41,8 @@ export class CrearAlbumComponent implements OnInit {
             icon: 'success',
             text: 'Se ha creado el album correctamente',
           })
+          this.mm.cargarInfo()
+          this.mm.habilitarCreacion=false
         } else {
           Swal.fire({
             icon: 'error',

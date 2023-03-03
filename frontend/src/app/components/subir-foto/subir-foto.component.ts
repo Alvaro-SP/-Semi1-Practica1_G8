@@ -16,7 +16,11 @@ export class SubirFotoComponent implements OnInit {
 
   constructor(private backend: BackendService, private router: Router) { 
     if (sessionStorage.getItem("usuario") == null) {
-      alert("Inicie sesion para poder entrar a su perfil")
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Inicie sesion para poder entrar a su perfil!',
+      })
       this.router.navigate(['login'])
     } else {
       this.backend.getAlbums(sessionStorage.getItem("usuario")).subscribe(
@@ -24,7 +28,11 @@ export class SubirFotoComponent implements OnInit {
           this.jsalbums = res
         },
         err => {
-          alert("Ocurrio un error")
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Ocurrio un error!',
+          })
         }
       )
     }
@@ -39,7 +47,7 @@ export class SubirFotoComponent implements OnInit {
     NamePhoto:'',
     Lastusuario: sessionStorage.getItem("usuario")
   }
-  
+
 
   jsalbums:any
   albums = []
@@ -109,9 +117,9 @@ export class SubirFotoComponent implements OnInit {
         text: 'Complete todos los campos!',
       })
       return
-    }
-
-    try{
+    } 
+    let backupFoto=this.cuerpo.Foto
+    try{   
       let auxArr = this.cuerpo.Foto.split(",", 2)
       this.cuerpo.Foto = auxArr[1]
     }catch{
@@ -133,14 +141,16 @@ export class SubirFotoComponent implements OnInit {
             icon: 'success',
             text: 'Se ha subido la fotografía al album correctamente',
           })
+
+          this.router.navigate(['verFotos'])
         } else {
           Swal.fire({
             icon: 'error',
             text: 'Esta fotografía ya existe en este album!'
           })
-          this.cuerpo.Foto = ""
-          this.cuerpo.Album = ""
+          this.cuerpo.Foto=backupFoto
         }
+  
       },
       err => {
         Swal.fire({
@@ -149,6 +159,7 @@ export class SubirFotoComponent implements OnInit {
         })
       }
     )
+
   }
 }
  

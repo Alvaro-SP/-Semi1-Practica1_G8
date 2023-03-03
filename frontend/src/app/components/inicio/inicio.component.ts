@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BackendService } from 'src/app/services/backend.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-inicio',
@@ -17,14 +18,22 @@ export class InicioComponent implements OnInit {
 
   constructor(private router: Router, private backend: BackendService) {
     if (sessionStorage.getItem("usuario") == null) {
-      alert("Inicie sesion para poder entrar a su perfil")
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Inicie sesion para entrar a su perfil!',
+      })
       this.router.navigate(['login'])
     } else {
       this.backend.getInfo(sessionStorage.getItem("usuario")).subscribe(
         res => {
           var js = JSON.stringify(res)
           if (js.includes("Res")) {
-            alert("Inicie sesion nuevamente para poder acceder")
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Inicie sesion nuevamente!',
+            })
             sessionStorage.removeItem("usuario")
             this.router.navigate(['login'])
           } else {
@@ -35,7 +44,11 @@ export class InicioComponent implements OnInit {
           }
         },
         err => {
-          alert("Ocurrio un error")
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Ocurrio un error!',
+          })
         }
       )
     }

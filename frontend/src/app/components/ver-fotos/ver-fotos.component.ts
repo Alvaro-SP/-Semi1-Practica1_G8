@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BackendService } from 'src/app/services/backend.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-ver-fotos',
@@ -13,14 +14,23 @@ export class VerFotosComponent implements OnInit {
 
   constructor(private backend: BackendService, private router: Router) {
     if (sessionStorage.getItem("usuario") == null) {
-      alert("Inicie sesion para poder entrar a su perfil")
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Inicie sesion para poder entrar a su perfil!',
+      })
+
       this.router.navigate(['login'])
     } else {
       this.backend.getFotos(sessionStorage.getItem("usuario")).subscribe(
         res => {
           var js = JSON.stringify(res)
           if (js.includes("Res")) {
-            alert("Inicie sesion nuevamente para poder acceder")
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Inicie sesion nuevamente para poder acceder!',
+            })
             sessionStorage.removeItem("usuario")
             this.router.navigate(['login'])
           } else {
@@ -28,7 +38,11 @@ export class VerFotosComponent implements OnInit {
           }
         },
         err => {
-          alert("Ocurrio un error")
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Ocurrio un error!',
+          })
         }
       )
     }

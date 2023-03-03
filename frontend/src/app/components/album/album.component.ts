@@ -19,10 +19,9 @@ export class AlbumComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.fotos.length == 0) {
+    this.firsFoto=this.fotos.shift()
+    if (this.firsFoto == '') {
       this.firsFoto = "https://pbs.twimg.com/media/El1D0t0XgAAzu75.jpg"
-    }else{
-      this.firsFoto=this.fotos.shift()
     }
   }
 
