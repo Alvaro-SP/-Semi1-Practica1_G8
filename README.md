@@ -73,6 +73,7 @@
 | Objetivos y alcances del sistema| [Ir](#ob) |
 | Componentes utilizados | [Ir](#sis) |
 | Sistema Operativo | [Ir](#sis) |
+| Vistas de la aplicación | [Ir](#vistas) |
 | Tecnologías utilizadas | [Ir](#tech) |
 | Interfaz del programa | [Ir](#inter) |
 | Conclusiones | [Ir](#Conclu) |
@@ -229,6 +230,24 @@ Utilizado para almacenar  los usuarios, albumes y fotos.
 
 - Para acceder se utiliza el link generado en la seccion de *alojamiento de sitios web estaticos* 
 ![a](assets/s3_7.PNG)
+
+
+## <a name="vistas" ></a> Vistas de la aplicación
+
+- Vista de la pagina de login
+  ![a](assets/i2.png)
+- Vista de la pagina de registro
+  ![a](assets/i3.png)
+- Vista de la pagina de albumes
+  ![a](assets/i4.png)
+- Vista de la pagina de subir fotos
+  ![a](assets/i6.png)
+- Vista de la pagina de perfil
+  ![a](assets/i7.png)
+- Vista de la pagina de editar perfil
+  ![a](assets/i8.png)
+- Vista de la pagina de editar album
+  ![a](assets/i10.png)
 
 
 ## Tecnologias utilizadas
