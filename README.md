@@ -143,8 +143,13 @@ Esperar a que se inicie la instancia y obtener su dirección IP pública o DNS.
 
 ![a](assets/ec6.png)
 
+- instancias corriendo:
+
+![a](assets/insrun.jpg)
+
 Posteriormente con algun cliente SSH podemos acceder a las consolas e iniciar cada API
 
+![a](assets/insrun2.jpg)
 
 ### Configuracion de RDS con MySQL
 
@@ -202,7 +207,10 @@ Utilizado para almacenar  los usuarios, albumes y fotos.
 
 ![a](assets/bl1.jpg)
 
+- grupos de seguridad del Balanceador de carga
 
+![a](assets/conban.jpg)
+![a](assets/conban2.jpg)
 ### Configuracion de S3 Bucket para Pagina web Estatica
 - Acceder a la consola de AWS con el usuario IAM con permisos de S3 e ir a dicha consola.
 
