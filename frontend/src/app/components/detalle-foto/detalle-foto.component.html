@@ -1,0 +1,70 @@
+<app-menu></app-menu>
+
+<div style="
+    background-color: #3c464c;
+    margin: auto;
+    width: 85%;
+    height: auto;
+    margin-top: 5%;
+    margin-bottom: 5%;
+  ">
+    <br />
+    <br />
+    <div class="row">
+
+        <div class="col">
+            <div class="mx-auto" style="width: 80%">
+                <div class="snapshot text-center">
+                    <h4 style="color: white">{{this.cuerpo.Nombre}}</h4>
+                    <img [src]="this.cuerpo.Foto" [height]="300" [width]="300" />
+                </div>
+            </div>
+
+            <br />
+        </div>
+        <div class="col">
+            <div class="mx-auto" style="width: 80%">
+                <div class="mb-3">
+                    <label for="exampleFormControlInput5" class="form-label" style="color: white">Descripcion</label>
+                    <textarea type="text" class="form-control" id="exampleFormControlInput5" [(ngModel)]="this.cuerpo.Descripcion" [ngModelOptions]="{ standalone: true }" [disabled]="true"></textarea>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="mx-auto" style="width: 80%">
+
+                <div class="form-group">
+                    <label for="" class="form-label" style="color: white">Seleccione Idioma</label>
+                    <div class="input-group">
+                        <select class="form-select" id="inputGroupSelect04" aria-label="Idiomas" [(ngModel)]="this.traducirDesc.Idioma">
+
+                            <option value="1">Ingles</option>
+                            <option value="2">Italiano</option>
+                            <option value="3">Neerlandes</option>
+                        </select>
+                        <button class="btn btn-outline-secondary" type="button" (click)="this.traducir()">Traducir</button>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        <div class="col">
+            <div class="mx-auto" style="width: 80%">
+                <div class="mb-3" *ngIf="this.Traduccion!=''">
+                    <label for="exampleFormControlInput5" class="form-label" style="color: white">Descripcion
+                        Traducida</label>
+                    <textarea type="text" class="form-control" id="exampleFormControlInput5" [(ngModel)]="this.Traduccion" [ngModelOptions]="{ standalone: true }" [disabled]="true"></textarea>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <br />
+    <br />
+</div>

@@ -48,4 +48,12 @@ export class BackendService {
   eliminaAlbum(usuario: any, namealbum: any) {
     return this.http.delete(`${this.URL}/eliminaAlbum/${usuario}/${namealbum}`);
   }
+  
+  detalleFoto(id:any){
+    return this.http.get(`${this.URL}/detalleFoto/${id}`);
+  }
+
+  traducirDescripcion(cuerpo:any){
+    return this.http.post(`${this.URL}/traducirDescripcion`, cuerpo);
+  }
 }
