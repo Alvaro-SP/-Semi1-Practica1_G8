@@ -1,19 +1,15 @@
 <app-menu></app-menu>
 <div class="divSubir">
-  <div class="text-center">
-    <p class="fs-1" style="color: white">
-      <b>Subir fotografía</b>
-    </p>
-  </div>
-  <br />
-  <div class="row">
-    <div class="col">
-      <div class="mx-auto" style="width: 80%">
-        <label
-          for="exampleFormControlInput1"
-          class="form-label"
-          style="color: white"
-          >Nombre de la imagen</label
+    <div class="text-center">
+        <p class="fs-1" style="color: white">
+            <b>Subir fotografía</b>
+        </p>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col">
+            <div class="mx-auto" style="width: 80%">
+                <label for="exampleFormControlInput1" class="form-label" style="color: white">Nombre de la imagen</label
         >
         <input
           type="text"
@@ -91,8 +87,26 @@
       </div>
     </div>
   </div>
+<br>
+  <div class="mx-auto" style="width: 80%">
+    <label
+          for="exampleFormControlInput1"
+          class="form-label"
+          style="color: white"
+          >Descipcion</label
+        >
+        <textarea
+          type="text"
+          class="form-control"
+          id="exampleFormControlInput1"
+          placeholder="Descripcion de la foto"
+          [(ngModel)]="this.cuerpo.Descripcion"
+          [ngModelOptions]="{ standalone: true }"
+        ></textarea>
+  </div>
+  
 
-  <div class="row">
+  <!-- <div class="row">
     <div class="col"></div>
     <div class="col">
       <div class="d-grid gap-2">
@@ -101,7 +115,7 @@
           aria-label="Default select example"
           [(ngModel)]="this.selectAlbum"
         >
-          <ng-container *ngFor="let album of jsalbums">
+          <ng-container *ngFor="let album of []">
             <option class="select-items" value="{{ album.Nombre }}">
               {{ album.Nombre }}
             </option>
@@ -110,7 +124,7 @@
       </div>
     </div>
     <div class="col"></div>
-  </div>
+  </div> -->
 
   <div class="row">
     <div class="col"></div>
@@ -129,7 +143,7 @@
     </div>
     <div class="col"></div>
   </div>
-
+ <!-- 
   <div class="row" *ngIf="!this.habilitarCreacion">
     <button
       type="button"
@@ -141,11 +155,11 @@
     </button>
   </div>
 
-  <div class="row" *ngIf="this.habilitarCreacion">
+ <div class="row" *ngIf="this.habilitarCreacion">
     <button type="button" class="btn btn-link" (click)="habilitaCreacion()">
       Ocultar
     </button>
   </div>
 
-  <app-crear-album *ngIf="this.habilitarCreacion"></app-crear-album>
+  <app-crear-album *ngIf="this.habilitarCreacion"></app-crear-album> -->
 </div>

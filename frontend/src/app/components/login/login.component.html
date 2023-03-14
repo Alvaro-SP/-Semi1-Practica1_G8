@@ -1,71 +1,76 @@
 <app-barra-superior></app-barra-superior>
 
-<div
-  style="
+<div style="
     background-color: #3c464c;
     margin: auto;
-    width: 30%;
+    width: 55%;
     height: auto;
     margin-top: 5%;
     margin-bottom: 5%;
-  "
->
-  <div class="text-center">
-    <p class="fs-1" style="color: white">
-      <b>Login</b>
-    </p>
-    <img src="../assets/logo.png" class="img-fluid" width="60%" />
-  </div>
-  <br />
-  <div class="mx-auto" style="width: 60%">
-    <div class="mb-3">
-      <label
-        for="exampleFormControlInput1"
-        class="form-label"
-        style="color: white"
-        >Usuario</label
-      >
-      <input
-        type="text"
-        class="form-control"
-        id="exampleFormControlInput1"
-        placeholder="your user"
-        [(ngModel)]="this.cuerpo.Usuario"
-        [ngModelOptions]="{ standalone: true }"
-      />
+  ">
+    <div class="text-center">
+        <p class="fs-1" style="color: white">
+            <b>Login</b>
+        </p>
+        <img src="../assets/logo.png" class="img-fluid" width="40%" />
     </div>
-    <div class="mb-3">
-      <label
-        for="exampleFormControlTextarea1"
-        class="form-label"
-        style="color: white"
-        >Contraseña</label
-      >
-      <input
-        type="password"
-        class="form-control"
-        id="exampleFormControlInput1"
-        placeholder="your password"
-        [(ngModel)]="this.cuerpo.Password"
-        [ngModelOptions]="{ standalone: true }"
-      />
+    <br />
+    <div class="row">
+        <div class="col">
+            <div class="mx-auto" style="width: 90%">
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label" style="color: white">Usuario</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="your user" [(ngModel)]="this.cuerpo.Usuario" [ngModelOptions]="{ standalone: true }" />
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlTextarea1" class="form-label" style="color: white">Contraseña</label>
+                    <input type="password" class="form-control" id="exampleFormControlInput1" placeholder="your password" [(ngModel)]="this.cuerpo.Password" [ngModelOptions]="{ standalone: true }" [disabled]="this.existsFoto" />
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="mx-auto" style="width:90%">
+                <div class="mb-3" style="width: 95%">
+                    <label for="exampleFormControlTextarea1" class="form-label" style="color: white">Foto</label>
+
+                    <webcam [height]="300" [width]="300" [trigger]="triggerObservable" (imageCapture)="handleImage($event)" *ngIf="showWebcam" [mirrorImage]="'never'"></webcam>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="bt btn-primary btn-lg" style="background-color: #242c3c" (click)="toggleWebcam()">
+              Encender Camara
+            </button>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="bt btn-primary btn-lg" style="background-color: #242c3c" [disabled]="!showWebcam" (click)="triggerSnapshot()">
+              Tomar foto
+            </button>
+                    </div>
+                </div>
+
+            </div>
+            <br>
+        </div>
     </div>
-    <div class="d-grid gap-2">
-      <button
-        type="submit"
-        class="bt btn-primary btn-lg"
-        style="background-color: #fc9c1c"
-        (click)="Login()"
-      >
+    <div class="text-center">
+
+        <div class="snapshot" *ngIf="this.existsFoto">
+            <p style="color:white">Tu foto</p>
+            <img [src]="this.cuerpo.Foto" [height]="250" [width]="300" />
+            <br>
+            <br>
+        </div>
+    </div>
+    <div class="mx-auto" style="width: 60%">
+        <div class="d-grid gap-2">
+            <button type="submit" class="bt btn-primary btn-lg" style="background-color: #fc9c1c" (click)="Login()">
         Submit
       </button>
+        </div>
+        <br />
+        <div class="text-center">
+            <p style="color: white">
+                No tienes cuenta? <a href="registro">Registrate</a>
+            </p>
+        </div>
+        <br />
     </div>
-    <br />
-    <div class="text-center">
-      <p style="color: white">
-        No tienes cuenta? <a href="registro">Registrate</a>
-      </p>
-    </div>
-    <br />
-  </div>
 </div>
