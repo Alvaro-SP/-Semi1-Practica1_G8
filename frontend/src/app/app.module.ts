@@ -17,6 +17,7 @@ import { SubirFotoComponent } from './components/subir-foto/subir-foto.component
 import { CrearAlbumComponent } from './components/crear-album/crear-album.component';
 import { EditarAlbumsComponent } from './components/editar-albums/editar-albums.component';
 import { CommonModule } from '@angular/common';
+import { DetalleFotoComponent } from './components/detalle-foto/detalle-foto.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { CommonModule } from '@angular/common';
     EditarPerfilComponent,
     SubirFotoComponent,
     CrearAlbumComponent,
-    EditarAlbumsComponent
+    EditarAlbumsComponent,
+    DetalleFotoComponent
   ],
   imports: [
     BrowserModule,

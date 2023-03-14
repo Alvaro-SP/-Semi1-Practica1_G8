@@ -10,7 +10,7 @@ export class AlbumComponent implements OnInit {
   nombre: string = ''
 
   @Input()
-  fotos: Array<String> = []
+  fotos: Array<any> = []
 
   firsFoto:any=""
 
@@ -20,9 +20,6 @@ export class AlbumComponent implements OnInit {
 
   ngOnInit(): void {
     this.firsFoto=this.fotos.shift()
-    if (this.firsFoto == '') {
-      this.firsFoto = "https://pbs.twimg.com/media/El1D0t0XgAAzu75.jpg"
-    }
   }
 
   getNombre() {
