@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { WebcamImage } from 'ngx-webcam';
 import { Observable, Subject } from 'rxjs';
 import { BackendService } from 'src/app/services/backend.service';
-import { DomSanitizer } from '@angular/platform-browser';
 
 import Swal from 'sweetalert2'
 
@@ -22,41 +21,34 @@ export class SubirFotoComponent implements OnInit {
         text: 'Inicie sesion para poder entrar a su perfil!',
       })
       this.router.navigate(['login'])
-    } else {
-      this.backend.getAlbums(sessionStorage.getItem("usuario")).subscribe(
-        res => {
-          this.jsalbums = res
-        },
-        err => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Ocurrio un error!',
-          })
-        }
-      )
     }
    }
 
   ngOnInit(): void {
   }
 
+  /*
   cuerpo: any = {
     Foto: '',
     Album: '',
     NamePhoto:'',
     Lastusuario: sessionStorage.getItem("usuario")
   }
+  */
 
+  cuerpo: any = {
+    Foto: '',
+    Album: '',
+    Descripcion:'',
+    Lastusuario: sessionStorage.getItem("usuario")
+  }
 
-  jsalbums:any
-  albums = []
   public showWebcam = false;
   public webcamImage: any = null;
   public hayFoto = false;
   habilitarCreacion = false;
 
-  selectAlbum:string = ''
+  //selectAlbum:string = ''
 
   // webcam snapshot trigger
   private trigger: Subject<void> = new Subject<void>();
@@ -65,9 +57,9 @@ export class SubirFotoComponent implements OnInit {
     this.showWebcam = !this.showWebcam;
   }
 
-  public habilitaCreacion(): void {
+  /*public habilitaCreacion(): void {
     this.habilitarCreacion = !this.habilitarCreacion;
-  }
+  }*/
 
 
 
@@ -109,8 +101,9 @@ export class SubirFotoComponent implements OnInit {
 
   subir(){
     //console.log(this.cuerpo.Foto)
-    this.cuerpo.Album = this.selectAlbum
-    if (this.cuerpo.Foto == "" || this.cuerpo.Album == "" || this.cuerpo.NamePhoto == "") {
+    //this.cuerpo.Album = this.selectAlbum
+    //if (this.cuerpo.Foto == "" || this.cuerpo.Album == "" || this.cuerpo.NamePhoto == "") {
+    if (this.cuerpo.Foto == "" || this.cuerpo.Descripcion == "" || this.cuerpo.NamePhoto == "") {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
@@ -148,8 +141,9 @@ export class SubirFotoComponent implements OnInit {
             icon: 'error',
             text: 'Esta fotografía ya existe en este album!'
           })
-          this.cuerpo.Foto=backupFoto
+          
         }
+        this.cuerpo.Foto=backupFoto
   
       },
       err => {
