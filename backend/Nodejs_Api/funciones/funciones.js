@@ -239,37 +239,31 @@ const uploadfoto = async(req, res) => {
     try {
         const data = req.body;
         var sql = `SELECT * FROM usuario WHERE username = '${data.Lastusuario}'`
-        console.log(sql)
         con.query(sql, function(err, result, fields) {
             const iduser = result[0].id
-            var sql2 = `SELECT * FROM album WHERE name_album = '${data.Album}' AND usuario_id = ${iduser}`
-            console.log(sql2)
-            con.query(sql2, function(err, resultalbum, fields) {
-                const idalbum = resultalbum[0].id
 
-                var sqltest = `SELECT * FROM fotos WHERE name_photo = '${data.NamePhoto}' AND album_id = ${idalbum}`
-                console.log(sqltest)
-                con.query(sqltest, function(err, resultafotos, fields) {
-                    if (resultafotos.length < 1) {
-                        uploadPhotopic(req.body).then(async(url_photo) => {
-                                var sqlfinal = `INSERT INTO fotos (id, name_photo, photo_link, album_id)
-                            VALUES (0, '${data.NamePhoto}','${url_photo}',${idalbum})`;
-                                console.log(sqlfinal)
-                                con.query(sqlfinal, function(err, result2) {
-                                    res.jsonp({ Res: true })
+            uploadPhotopic(req.body).then(async(url_photo) => {
+                    var sqlfinal = `INSERT INTO fotos (name_photo, photo_link, description, userid)
+                            VALUES (0, '${data.NamePhoto}','${url_photo}',${idalbum}, ${iduser})`;
+                    con.query(sqlfinal, function(err, result2, fieldd) {
+                        if (err) return res.jsonp({ Res: false })
+                        rekognition.detectLabels({
+                            Image: Buffer.from(data.Foto, 'base64')
+                        }, (err, data) => {
+                            if (err) return res.jsonp({ Res: false })
+                            for (let i in data.Labels) {
+                                con.query(`CALL RegistroAlbumFoto(${i.Name}, ${url_photo});`, function(err, result, filedd) {
+                                    if (err) return res.jsonp({ Res: false })
+                                    return res.jsonp({ Res: true })
                                 })
-                            },
-                            async(error) => {
-                                console.log(error)
-                                res.jsonp({ Res: false })
-                            })
-                    } else {
-                        res.jsonp({ Res: false })
-                    }
-
+                            }
+                        })
+                    })
+                },
+                async(error) => {
+                    console.log(error)
+                    res.jsonp({ Res: false })
                 })
-
-            })
         })
 
 
@@ -446,9 +440,9 @@ const getFotosUser = async(req, res) => {
             if (err) { res.jsonp({ Res: false }) } else {
                 const iduser = result[0].id
 
-                var sql3 = `SELECT a.id, a.name_album, COALESCE(f.photo_link, '') AS photo_link 
-FROM (album a LEFT JOIN fotos f ON a.id = f.album_id) 
-WHERE a.usuario_id = ${iduser}
+                var sql3 = `SELECT a.id, a.name_album, f.photo_link 
+FROM fotos f JOIN album_fotos af ON f.id = af.fotos_id JOIN album a ON af.album_id = a.id
+WHERE f.userid = ${iduser}
 order by a.name_album;`
                 console.log(sql3)
                 con.query(sql3, function(err, resultalbum, fields) {
