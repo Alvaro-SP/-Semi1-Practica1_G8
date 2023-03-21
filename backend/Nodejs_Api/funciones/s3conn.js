@@ -1,20 +1,18 @@
-import AWS from'aws-sdk'
+import AWS from 'aws-sdk'
 
 
-import * as dotenv from 'dotenv'
-dotenv.config()
+//import * as dotenv from 'dotenv'
+//dotenv.config()
 
-var s3 = new AWS.S3(
-    {
-        accessKeyId: 'AKIA2R37HQXTCPY4WGSF',
-        secretAccessKey: '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',
-        region: 'us-east-2'
-    }
-)
+var s3 = new AWS.S3({
+    accessKeyId: 'AKIA2R37HQXTCPY4WGSF',
+    secretAccessKey: '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',
+    region: 'us-east-2'
+})
 
 
 
-const uploadPhotoprofile = async (data) => {
+const uploadPhotoprofile = async(data) => {
     try {
         var name = `Fotos_Perfil/${data.Usuario}.jpg`;
         //console.log(data.Foto)
@@ -24,7 +22,7 @@ const uploadPhotoprofile = async (data) => {
             Key: name,
             Body: buffer,
             ContentType: "image/jpeg",
-        };        
+        };
         var params2 = {
             Bucket: 'practica1-g8-imagenes',
             Key: name,
@@ -36,7 +34,7 @@ const uploadPhotoprofile = async (data) => {
         //const url = s3.getSignedUrl('getObject', params2);
         //console.log("entra aqui")
         console.log(`https://practica1-g8-imagenes.s3.amazonaws.com/${name}`)
-        //console.log(url)
+            //console.log(url)
         return `https://practica1-g8-imagenes.s3.amazonaws.com/${name}`;
     } catch (error) {
         console.log("error")
@@ -45,7 +43,7 @@ const uploadPhotoprofile = async (data) => {
 };
 
 
-const uploadPhotopic = async (data) => {
+const uploadPhotopic = async(data) => {
     try {
         var name = `Fotos_Publicadas/${data.Lastusuario}_${data.Album}_${data.NamePhoto}.jpg`;
         let buffer = new Buffer.from(data.Foto, "base64");
@@ -54,7 +52,7 @@ const uploadPhotopic = async (data) => {
             Key: name,
             Body: buffer,
             ContentType: "image/jpeg",
-        };        
+        };
         var params2 = {
             Bucket: 'practica1-g8-imagenes',
             Key: name,
@@ -74,7 +72,7 @@ const uploadPhotopic = async (data) => {
     }
 };
 
-const deletePhoto = async (data) => {
+const deletePhoto = async(data) => {
     try {
         var name = `${data.user}-${data.name}.jpg`;
         var params = {
