@@ -2,7 +2,7 @@ import express from 'express'
 const app = express();
 const PORT = 8080;
 import bodyParser from 'body-parser'
-import { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser } from './funciones/funciones.js'
+import { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser , sendmessagebot, getbotresponse} from './funciones/funciones.js'
 import morgan from 'morgan';
 app.use(morgan('dev'))
 var jsonParser = bodyParser.json()
@@ -55,5 +55,9 @@ app.get('/getAlbum/:username/:nameAlbum', jsonParser, (req, res) => getFotosAlbu
 app.delete('/eliminaAlbum/:username/:nameAlbum', jsonParser, (req, res) => deleteAlbum(req, res));
 
 app.get('/verFotos/:usuario', jsonParser, (req, res) => getFotosUser(req, res));
+
+app.get('/chatbotmsg', jsonParser,(req, res) => getbotresponse(req, res));
+
+app.post('/sendmessage', jsonParser,(req, res) => sendmessagebot(req, res));
 
 app.listen(PORT || process.env.PORT)

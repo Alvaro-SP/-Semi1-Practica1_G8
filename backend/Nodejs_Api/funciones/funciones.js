@@ -3,7 +3,7 @@ import { con } from './dbconnection.js'
 import axios from 'axios'
 import { uploadPhotoprofile, uploadPhotopic } from './s3conn.js'
 import md5 from 'blueimp-md5'
-
+import { postchatbot } from './botconn.js'
 const test = async(req, res) => {
     console.log(req.body)
     res.jsonp({ res: md5(req.body.texto) })
@@ -487,7 +487,25 @@ order by a.name_album;`
     }
 }
 
+const sendmessagebot = async (req, res) => {
+    const message = req.body.message;
+    console.log(message)
+    try {
+        res.jsonp(postchatbot(message))
+    } catch (error) {
+        console.log(error)
+        res.jsonp({ Res: false })
+    }
+}
+const getbotresponse = async (req, res) => {
+    try {
+
+    } catch (error) {
+        console.log(error)
+        res.jsonp({ Res: false })
+    }
+}
 
 
 
-export { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser }
+export { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser,sendmessagebot, getbotresponse }

@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk'
-const { nanoid } = require('nanoid')
+import {nanoid} from 'nanoid'
 
 //import * as dotenv from 'dotenv'
 //dotenv.config()
