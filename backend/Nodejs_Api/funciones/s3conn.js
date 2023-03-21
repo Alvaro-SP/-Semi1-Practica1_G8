@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk'
-
+const { nanoid } = require('nanoid')
 
 //import * as dotenv from 'dotenv'
 //dotenv.config()
@@ -45,7 +45,8 @@ const uploadPhotoprofile = async(data) => {
 
 const uploadPhotopic = async(data) => {
     try {
-        var name = `Fotos_Publicadas/${data.Lastusuario}_${data.Album}_${data.NamePhoto}.jpg`;
+        const id = nanoid(10)
+        var name = `Fotos_Publicadas/${data.Lastusuario}_${id}_${data.NamePhoto}.jpg`;
         let buffer = new Buffer.from(data.Foto, "base64");
         var params = {
             Bucket: 'practica1-g8-imagenes',
