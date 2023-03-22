@@ -111,50 +111,11 @@ const Registrar = async(req, res) => {
                       });
 
                     uploadPhotoprofile(req.body).then(async(url_photo) => {
-                        var sql = `INSERT INTO usuario (id, username, name, password, description) VALUES (0, '${data.Usuario}','${data.Nombre}','${md5(data.Password)}','${cadena}')`;
+                        var sql = `CALL RegistroUsuario('${data.Usuario}', '${data.Nombre}', '${md5(data.Password)}', '${cadena}', '${url_photo}')`;
                         //console.log(sql)
                         con.query(sql, function(err, result2) {
                             if (err) { res.jsonp({ Res: false }) } else {
-                                //conseguir id del usuario
-                                con.query(`SELECT * FROM usuario WHERE username = '${data.Usuario}' AND password = '${md5(data.Password)}' `, function(err, resultlogin, fields) {
-                                    if (err) { res.jsonp({ Res: false }) } else {
-                                        const iduser = resultlogin[0].id                                      
-
-                                        uploadPhotoprofile({ Usuario: req.body.Usuario + `_0`, Foto: req.body.Foto }).then(async(url_photo2) => {
-                                            //insertar la imagen a la base de datos
-                                            var queryforimage = `INSERT INTO fotos (id, name_photo, photo_link, description, userid) VALUES (0, 'profilepic','${url_photo2}', '${cadena}', '${iduser}')`;
-                                            console.log(queryforimage)
-                                            con.query(queryforimage, function(err, result7) {
-                                                if (err) { res.jsonp({ Res: false }) } else {
-                                                    var queryforalbum = `INSERT INTO album (name_album) VALUES ('perfil_${data.Usuario}')`;
-                                                    con.query(queryforalbum, function(err, result7) {
-                                                        if (err) { res.jsonp({ Res: false }) } else {
-                                                            
-                                                            con.query(`SELECT * FROM album WHERE name_album = 'perfil_${data.Usuario}'`, function(err, resultAlb, flds) {
-                                                                if (err) { res.jsonp({ Res: false }) } else {
-                                                                    con.query(`SELECT * FROM fotos WHERE name_photo = '${profilepic}' AND photo_link = '${url_photo2}' AND userid = '${iduser}'`, function(err, resultft, flds) {
-                                                                        if (err) { res.jsonp({ Res: false }) } else {
-                                                                            con.query(`INSERT INTO album_fotos (album_id, fotos_id) VALUES ('${resultAlb.id}', ${resultft.id})`, function(err, result7) {
-                                                                                if (err) { res.jsonp({ Res: false }) } else {
-                                                                                    res.jsonp({ Res: true })
-                                                                                }
-                                                                            });
-                                                                        }
-                                                                    });
-                                                                }
-                                                            });
-
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                        },
-                                        async(error) => {
-                                            console.log(error)
-                                            res.jsonp({ Res: false })
-                                        })
-                                    }
-                                });
+                                res.jsonp({ Res: true })
                             }
                         });
                     })
