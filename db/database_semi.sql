@@ -82,3 +82,35 @@ BEGIN
     INSERT INTO album_fotos (album_id, fotos_id) VALUES (idAlbum, idFoto);
 END $$
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS RegistroUsuario;
+DELIMITER $$
+CREATE PROCEDURE RegistroUsuario(usernamev VARCHAR(45), namev VARCHAR(100), passwordv VARCHAR(50), descriptionv TEXT, urlv VARCHAR(150))
+BEGIN
+    DECLARE idUser INT;
+    DECLARE idAlbum INT;
+    DECLARE idFoto INT;
+
+    -- Ingreso de usuario
+    IF NOT EXISTS(SELECT 1 FROM usuario WHERE username = usernamev) THEN
+        INSERT INTO usuario (username, name, password, description) VALUES (usernamev, namev, passwordv, descriptionv);
+    END IF;
+    -- Id usuario
+    SELECT id INTO idUser FROM usuario WHERE username = usernamev;
+
+    -- Ingreso de foto
+    INSERT INTO fotos (name_photo, photo_link, description, userid) VALUES ('profilepic', urlv, descriptionv, idUser);
+    -- Id de la foto
+    SELECT id INTO idFoto FROM fotos WHERE photo_link = urlv;
+
+
+    -- verificar si existe album
+    IF NOT EXISTS(SELECT 1 FROM album WHERE name_album = CONCAT('perfil_', usernamev)) THEN
+        INSERT INTO album (name_album) VALUES (CONCAT('perfil_', usernamev));
+    END IF;
+    -- Id del album
+    SELECT id INTO idAlbum FROM album WHERE name_album = CONCAT('perfil_', usernamev);
+
+    INSERT INTO album_fotos (album_id, fotos_id) VALUES (idAlbum, idFoto);
+END $$
+DELIMITER ;
