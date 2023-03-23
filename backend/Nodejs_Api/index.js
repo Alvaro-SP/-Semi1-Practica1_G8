@@ -2,7 +2,7 @@ import express from 'express'
 const app = express();
 const PORT = 8080;
 import bodyParser from 'body-parser'
-import { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser, detalleFotoId } from './funciones/funciones.js'
+import { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser, detalleFotoId, traductor } from './funciones/funciones.js'
 import morgan from 'morgan';
 import cors from 'cors';
 app.use(morgan('dev'))
@@ -59,5 +59,7 @@ app.delete('/eliminaAlbum/:username/:nameAlbum', jsonParser, (req, res) => delet
 app.get('/verFotos/:usuario', jsonParser, (req, res) => getFotosUser(req, res));
 
 app.get('/detalleFoto/:id', jsonParser, (req, res) => detalleFotoId(req, res))
+
+app.post('/traducir', jsonParser, (req, res) => traductor(req, res))
 
 app.listen(PORT || process.env.PORT)

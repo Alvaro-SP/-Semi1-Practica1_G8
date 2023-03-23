@@ -54,6 +54,6 @@ export class BackendService {
   }
 
   traducirDescripcion(cuerpo:any){
-    return this.http.post(`${this.URL}/traducirDescripcion`, cuerpo);
+    return this.http.post(`${this.URL}/traducir`, cuerpo);
   }
 }

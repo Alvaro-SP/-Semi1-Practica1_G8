@@ -18,6 +18,12 @@ var rekognition = new AWS.Rekognition({
     secretAccessKey: '4HSTR7voa3xq7VIZ9LsrrhpJEAeVCjCFqizcL2B+'
 })
 
+var translate = new AWS.Translate({
+    region: 'us-east-1',
+    accessKeyId: 'AKIA3YXREBXTAZHZZNWQ',
+    secretAccessKey: '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'
+})
+
 const login = async(req, res) => {
     const data = req.body;
     try {
@@ -92,25 +98,35 @@ const Registrar = async(req, res) => {
                 rekognition.detectFaces(params).promise().then(async(detections) => {
                     var cadena = ''
                     detections.FaceDetails.forEach((i) => {
-                        cadena += `edad ${i.AgeRange.Low}-${i.AgeRange.High}\t`;
+                        cadena += `edad ${i.AgeRange.Low}-${i.AgeRange.High}.\t`;
                         if (i.Beard.Value) {
-                            cadena += 'Barba\t';
+                            cadena += 'Tiene Barba\t';
                         }
                         if (i.Eyeglasses.Value) {
                             cadena += 'Usa lentes\t';
                         }
                         if (i.Mustache.Value) {
-                            cadena += 'Bigote\t';
+                            cadena += 'Tiene Bigote\t';
                         }
                         if (i.Gender.Value === 'Male') {
-                            cadena += 'Hombre\t';
+                            cadena += 'Es Hombre.\t';
                         } else {
-                            cadena += 'Mujer\t';
+                            cadena += 'Es Mujer.\t';
                         }
-                        cadena += `${i.Emotions[0].Type}`;
 
+                        const params2 = {
+                            SourceLanguageCode: 'auto',
+                            TargetLanguageCode: 'es',
+                            Text: i.Emotions[0].Type
+                        }
+                        translate.translateText(params2, (err2, data2) => {
+                            if (err2) {
+                                cadena += `${i.Emotions[0].Type}`;
+                            } else {
+                                cadena += `${data2.TranslatedText}`;
+                            }
+                        })
                     });
-                    console.log(cadena)
 
                     uploadPhotoprofile(req.body).then(async(url_photo) => {
                         var sql = `CALL RegistroUsuario('${data.Usuario}', '${data.Nombre}', '${md5(data.Password)}', '${cadena}', '${url_photo}')`;
@@ -511,6 +527,18 @@ const detalleFotoId = async(req, res) => {
 
 }
 
+const traductor = async(req, res) => {
+    console.log(req.body)
+    const { Idioma, Descripcion } = req.body
+    const params = {
+        SourceLanguageCode: 'auto',
+        TargetLanguageCode: Idioma,
+        Text: Descripcion
+    }
+    translate.translateText(params, (err, data) => {
+        if (err) res.jsonp({ Res: false })
+        return res.jsonp({ Traduccion: data.TranslatedText })
+    })
+}
 
-
-export { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser, detalleFotoId }
+export { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser, detalleFotoId, traductor }
