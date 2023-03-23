@@ -22,7 +22,7 @@ const login = async(req, res) => {
     const data = req.body;
     try {
         //por foto
-
+        console.log(req.body)
         if (data.Foto != '') {
             con.query(`SELECT photo FROM usuario WHERE username = '${data.Usuario}' `, async function(err, result, fields) {
                 if (err) { res.jsonp({ Res: false }) } else {
@@ -79,42 +79,47 @@ const Registrar = async(req, res) => {
     const data = req.body;
     try {
         con.query(`SELECT * FROM usuario WHERE username = '${data.Usuario}'`, function(err, result, fields) {
-            //console.log(result);
+            console.log(result);
             if (result.length >= 1) { res.jsonp({ Res: false }) } else {
                 //obtener analisis facial
                 const params = {
                     Image: {
-                      Bytes: Buffer.from(req.body.Foto, 'base64')
+                        Bytes: Buffer.from(req.body.Foto, 'base64')
                     },
                     Attributes: ['ALL']
                 };
+
                 rekognition.detectFaces(params).promise().then(async(detections) => {
-                    
+                    var cadena = ''
                     detections.FaceDetails.forEach((i) => {
                         cadena += `edad ${i.AgeRange.Low}-${i.AgeRange.High}\t`;
                         if (i.Beard.Value) {
-                          cadena += 'Barba\t';
+                            cadena += 'Barba\t';
                         }
                         if (i.Eyeglasses.Value) {
-                          cadena += 'Usa lentes\t';
+                            cadena += 'Usa lentes\t';
                         }
                         if (i.Mustache.Value) {
-                          cadena += 'Bigote\t';
+                            cadena += 'Bigote\t';
                         }
                         if (i.Gender.Value === 'Male') {
-                          cadena += 'Hombre\t';
+                            cadena += 'Hombre\t';
                         } else {
-                          cadena += 'Mujer\t';
+                            cadena += 'Mujer\t';
                         }
                         cadena += `${i.Emotions[0].Type}`;
-                        
-                      });
+
+                    });
+                    console.log(cadena)
 
                     uploadPhotoprofile(req.body).then(async(url_photo) => {
                         var sql = `CALL RegistroUsuario('${data.Usuario}', '${data.Nombre}', '${md5(data.Password)}', '${cadena}', '${url_photo}')`;
                         //console.log(sql)
                         con.query(sql, function(err, result2) {
-                            if (err) { res.jsonp({ Res: false }) } else {
+                            if (err) {
+                                console.log(err);
+                                res.jsonp({ Res: false })
+                            } else {
                                 res.jsonp({ Res: true })
                             }
                         });
@@ -133,7 +138,7 @@ const Registrar = async(req, res) => {
 const infouser = async(req, res) => {
     const data = req.params;
     try {
-        var sql = `SELECT username, name, photo FROM usuario WHERE username = '${data.usuario}'`
+        var sql = `SELECT username, name, photo, description FROM usuario WHERE username = '${data.usuario}'`
         console.log(sql)
         con.query(sql, function(err, result, fields) {
             if (err) { res.jsonp({ Res: false }) } else {
@@ -143,6 +148,7 @@ const infouser = async(req, res) => {
                         Usuario: result[0].username,
                         Nombre: result[0].name,
                         Foto: result[0].photo,
+                        Descripcion: result[0].description
                     })
                 } else {
                     res.jsonp({ Res: false })
@@ -230,19 +236,28 @@ const uploadfoto = async(req, res) => {
 
             uploadPhotopic(req.body).then(async(url_photo) => {
                     var sqlfinal = `INSERT INTO fotos (name_photo, photo_link, description, userid)
-                            VALUES (0, '${data.NamePhoto}','${url_photo}',${idalbum}, ${iduser})`;
+                            VALUES ('${data.NamePhoto}','${url_photo}','${data.Descripcion}', ${iduser})`;
                     con.query(sqlfinal, function(err, result2, fieldd) {
                         if (err) return res.jsonp({ Res: false })
-                        rekognition.detectLabels({
-                            Image: Buffer.from(data.Foto, 'base64')
-                        }, (err, data) => {
+                        const params = {
+                            Image: {
+                                Bytes: Buffer.from(data.Foto, 'base64')
+                            }
+                        }
+                        rekognition.detectLabels(params, (err, data) => {
+                            const labs = data.Labels
                             if (err) return res.jsonp({ Res: false })
-                            for (let i in data.Labels) {
-                                con.query(`CALL RegistroAlbumFoto(${i.Name}, ${url_photo});`, function(err, result, filedd) {
-                                    if (err) return res.jsonp({ Res: false })
-                                    return res.jsonp({ Res: true })
+                            for (let i = 0; i < labs.length; i++) {
+                                console.log(labs[i].Name)
+                                con.query(`CALL RegistroAlbumFoto('${labs[i].Name}', '${url_photo}');`, function(err, result, filedd) {
+                                    if (err) {
+                                        console.log(err);
+                                        return res.jsonp({ Res: false })
+                                    }
+
                                 })
                             }
+                            return res.jsonp({ Res: true })
                         })
                     })
                 },
@@ -426,15 +441,13 @@ const getFotosUser = async(req, res) => {
             if (err) { res.jsonp({ Res: false }) } else {
                 const iduser = result[0].id
 
-                var sql3 = `SELECT a.id, a.name_album, f.photo_link 
+                var sql3 = `SELECT a.id, a.name_album,f.id as idF, f.photo_link 
 FROM fotos f JOIN album_fotos af ON f.id = af.fotos_id JOIN album a ON af.album_id = a.id
 WHERE f.userid = ${iduser}
 order by a.name_album;`
-                console.log(sql3)
                 con.query(sql3, function(err, resultalbum, fields) {
                     const listaalbumes = []
                     const listasend = []
-
                     for (let index = 0; index < resultalbum.length; index++) {
                         const element = resultalbum[index];
 
@@ -445,9 +458,6 @@ order by a.name_album;`
                         }
                     }
 
-
-
-
                     for (let index = 0; index < resultalbum.length; index++) {
                         const element = resultalbum[index];
 
@@ -455,14 +465,16 @@ order by a.name_album;`
                             const element2 = listaalbumes[rec];
 
                             if (element2 === element.name_album) {
-                                console.log(listasend[rec])
-                                listasend[rec].Fotos.push(element.photo_link)
+                                let foto = {
+                                    id: element.idF,
+                                    url: element.photo_link
+                                }
+                                listasend[rec].Fotos.push(foto)
                             }
 
                         }
                     }
-
-                    res.jsonp(listasend)
+                    return res.jsonp(listasend)
                 })
             }
         });
@@ -473,7 +485,32 @@ order by a.name_album;`
     }
 }
 
+const detalleFotoId = async(req, res) => {
+    const id = req.params.id
+    try {
+        let consulta = `SELECT id, name_photo, photo_link, description FROM fotos WHERE id = ${id}`
+        con.query(consulta, function(err, result, fields) {
+            if (err) {
+                console.log(err)
+                return res.jsonp({ Res: false })
+            }
+            const salida = {
+                Id: result[0].id,
+                Nombre: result[0].name_photo,
+                Foto: result[0].photo_link,
+                Descripcion: result[0].description
+            }
+            return res.jsonp(salida)
+
+        })
+
+    } catch (err) {
+        console.log(error)
+        res.jsonp({ Res: false })
+    }
+
+}
 
 
 
-export { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser }
+export { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser, detalleFotoId }

@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 export class BackendService {
 
   constructor(private http: HttpClient) { }
-  URL: string = "http://BalanceadorSemi1P1-1838550676.us-east-2.elb.amazonaws.com"
+  URL: string = "http://localhost:8080"
 
   Login(cuerpo: any) {
     return this.http.post(`${this.URL}/login`, cuerpo);

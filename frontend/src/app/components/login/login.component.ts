@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
   img: string = ''
 
   Login() {
-    if (this.cuerpo.Usuario=="" || (this.cuerpo.Password=="" && this.cuerpo.Foto=="")  ) {
+    if (this.cuerpo.Usuario == "" || (this.cuerpo.Password == "" && this.cuerpo.Foto == "")) {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
@@ -61,16 +61,19 @@ export class LoginComponent implements OnInit {
       })
       return;
     }
+    if (this.cuerpo.Foto != '') {
+      let auxArr = this.cuerpo.Foto.split(",", 2)
+      this.cuerpo.Foto = auxArr[1]
+    }
+
     this.backend.Login(this.cuerpo).subscribe(
 
       res => {
         const resp = JSON.parse(JSON.stringify(res))
         console.log(resp)
         if (resp.Res) {
+
           sessionStorage.setItem("usuario", this.cuerpo.Usuario)
-          this.cuerpo.Usuario = ""
-          this.cuerpo.Password = ""
-          this.cuerpo.Foto = ""
           this.router.navigate(['inicio'])
         } else {
           Swal.fire({

@@ -24,15 +24,50 @@ export class DetalleFotoComponent implements OnInit {
   Traduccion = '';
 
   constructor(private backend: BackendService, private ruta: ActivatedRoute, private router: Router) {
-    
+    if (sessionStorage.getItem("usuario") == null) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Inicie sesion para entrar a su perfil!',
+      })
+      this.router.navigate(['login'])
+    } else {
+      this.backend.getInfo(sessionStorage.getItem("usuario")).subscribe(
+        res => {
+          var js = JSON.stringify(res)
+          if (js.includes("Res")) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Inicie sesion nuevamente!',
+            })
+            sessionStorage.removeItem("usuario")
+            this.router.navigate(['login'])
+          } else {
+            var data = JSON.parse(js)
+            this.cuerpo.Id = data.Id
+            this.cuerpo.Nombre = data.Nombre
+            this.cuerpo.Foto = data.Foto
+            this.cuerpo.Descripcion = data.Descripcion
+          }
+        },
+        err => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Ocurrio un error!',
+          })
+        }
+      )
+    }
   }
 
   ngOnInit(): void {
   }
 
   traducir() {
-    
-    if(this.traducirDesc.Idioma==''){
+
+    if (this.traducirDesc.Idioma == '') {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',

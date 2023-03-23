@@ -66,7 +66,7 @@ const uploadPhotopic = async(data) => {
         const url = s3.getSignedUrl('getObject', params2);
         //console.log("entra aqui")
         //console.log(`https://${'practica1-g8-imagenes'}.s3.amazonaws.com/${name}`)
-        console.log(url)
+
         return `https://practica1-g8-imagenes.s3.amazonaws.com/${name}`;
     } catch (error) {
         console.log("error")
