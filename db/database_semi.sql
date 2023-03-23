@@ -117,3 +117,24 @@ BEGIN
     INSERT INTO album_fotos (album_id, fotos_id) VALUES (idAlbum, idFoto);
 END $$
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS updateFoto1;
+DELIMITER $$
+CREATE PROCEDURE updateFoto1(link VARCHAR(150), descripcion TEXT, userid1 INT, newUser VARCHAR(45),
+                             lastuser VARCHAR(45),nombre VARCHAR(100))
+BEGIN
+    DECLARE idAlbum INT;
+    DECLARE idFoto INT;
+    SELECT id INTO idAlbum FROM album WHERE name_album = CONCAT('perfil_', lastuser);
+
+    -- insertar foto
+    INSERT INTO fotos (name_photo, photo_link, description, userid) VALUES ('profilepic', link, descripcion, userid1);
+    SELECT id INTO idFoto FROM fotos WHERE photo_link = link;
+    -- actualizar usuario
+    UPDATE usuario SET username=newUser,name=nombre, photo=link, description=descripcion WHERE id = userid1;
+    -- asociar al album
+    INSERT INTO album_fotos (album_id, fotos_id) VALUES (idAlbum, idFoto);
+    -- renombrar albun
+    UPDATE album SET name_album=CONCAT('perfil_',newUser) WHERE id=idAlbum;
+END $$
+DELIMITER ;

@@ -100,13 +100,13 @@ const Registrar = async(req, res) => {
                     detections.FaceDetails.forEach((i) => {
                         cadena += `edad ${i.AgeRange.Low}-${i.AgeRange.High}.\t`;
                         if (i.Beard.Value) {
-                            cadena += 'Tiene Barba\t';
+                            cadena += 'Tiene Barba.\t';
                         }
                         if (i.Eyeglasses.Value) {
-                            cadena += 'Usa lentes\t';
+                            cadena += 'Usa lentes.\t';
                         }
                         if (i.Mustache.Value) {
-                            cadena += 'Tiene Bigote\t';
+                            cadena += 'Tiene Bigote.\t';
                         }
                         if (i.Gender.Value === 'Male') {
                             cadena += 'Es Hombre.\t';
@@ -185,61 +185,106 @@ const actualizaInfo = async(req, res) => {
     const Foto = data.Foto;
     const Password = md5(data.Password);
     const username = data.Lastusuario;
-    //console.log(data)
+    console.log(Foto)
+    let bandera = Foto.includes("http")
+    console.log(bandera)
     try {
-        var sql = `SELECT id, username, name, photo FROM usuario WHERE username = '${username}' AND password = '${Password}'`
-        console.log(sql)
-        con.query(sql, function(err, result, fields) {
-            if (err) { res.jsonp({ Res: false }) } else {
-                if (result.length == 1) {
-                    const iduser = result[0].id
-                    if (Foto != "") {
-                        uploadPhotoprofile(data).then(async(url_photo) => {
-                            var sql2 = `SELECT * FROM album WHERE name_album = 'fotos de perfil' AND usuario_id = ${iduser}`
-                            console.log(sql2)
-                            con.query(sql2, function(err, resultalbum, fields) {
-                                if (resultalbum.length == 1) {
-                                    const albumid = resultalbum[0].id
-                                        //Verificar cuantas imagenes hay en el album
-                                    var sql3 = `SELECT * FROM fotos WHERE album_id = ${albumid}`
-                                    console.log(sql3)
-                                    con.query(sql3, function(err, resultfotos, fields) {
-                                        const cantidadfotos = resultfotos.length
-                                            //subirfoto
-                                        uploadPhotoprofile({ Usuario: usuario + `_${cantidadfotos}`, Foto: Foto }).then(async(url_photoc) => {
-                                            var sql4 = `INSERT INTO fotos (id, name_photo, photo_link, album_id) 
-                                        values( 0,'profilepic_${cantidadfotos}', '${url_photoc}', ${albumid} )`
-                                            console.log(sql4)
-                                            con.query(sql4, function(err, resultinsert, fields) {
-                                                //cambiar los datos del usuario
-                                                var sql5 = `UPDATE usuario SET username = '${usuario}', name = '${nombre}', photo = '${url_photo}' WHERE id =  ${iduser};`
-                                                console.log(sql5)
-                                                con.query(sql5, function(err, resultaalter, fields) {
-                                                    res.jsonp({ Res: true })
-                                                })
-                                            })
-                                        })
-                                    })
-                                } else {
-                                    res.jsonp({ Res: false })
-                                }
-                            })
 
-
+        con.query(`SELECT id, username, name, photo FROM usuario 
+        WHERE username = '${username}'
+        AND password = '${Password}'`, function(err, result, fields) {
+            if (err) { console.log(err); return res.jsonp({ Res: false }) }
+            console.log(result)
+            if (result.length == 1) {
+                const iduser = result[0].id
+                    // no cambio la foto solo lo demas
+                if (bandera) {
+                    console.log("que onda")
+                    con.query(`UPDATE usuario SET username='${usuario}', name='${nombre}',
+                        password='${Password}' WHERE id=${iduser};`, function(err, resUp1, field) {
+                        if (err) { console.log(err); return res.jsonp({ Res: false }) }
+                        //actualizar nombre del album fotos de perfil
+                        con.query(`UPDATE album SET name_album='perfil_${usuario}' 
+                            WHERE name_album='perfil_${username}'`, function(err, resUp2, field) {
+                            if (err) { console.log(err); return res.jsonp({ Res: false }) }
+                            return res.jsonp({ Res: true })
                         })
-                    } else {
-
-                    }
+                    })
                 } else {
-                    res.jsonp({ Res: false })
+                    //contador de fotos de perfil
+                    con.query(`SELECT COUNT(f.photo_link) as total FROM fotos f, album_fotos af, album a
+                        WHERE a.name_album='perfil_${username}'
+                        AND a.id=af.album_id
+                        AND af.fotos_id=f.id`, function(err, resCant, field) {
+                        if (err) { console.log(err); return res.jsonp({ Res: false }) }
+                        const cantidad = parseInt(resCant[0].total) + 1
+                        const newData = {
+                            Usuario: usuario + cantidad,
+                            Foto: Foto
+                        }
+                        const params = {
+                            Image: {
+                                Bytes: Buffer.from(Foto, 'base64')
+                            },
+                            Attributes: ['ALL']
+                        };
+                        rekognition.detectFaces(params).promise().then(async(detections) => {
+                            var cadena = ''
+                            detections.FaceDetails.forEach((i) => {
+                                cadena += `edad ${i.AgeRange.Low}-${i.AgeRange.High}.\t`;
+                                if (i.Beard.Value) {
+                                    cadena += 'Tiene Barba.\t';
+                                }
+                                if (i.Eyeglasses.Value) {
+                                    cadena += 'Usa lentes.\t';
+                                }
+                                if (i.Mustache.Value) {
+                                    cadena += 'Tiene Bigote.\t';
+                                }
+                                if (i.Gender.Value === 'Male') {
+                                    cadena += 'Es Hombre.\t';
+                                } else {
+                                    cadena += 'Es Mujer.\t';
+                                }
+
+                                const params2 = {
+                                    SourceLanguageCode: 'auto',
+                                    TargetLanguageCode: 'es',
+                                    Text: i.Emotions[0].Type
+                                }
+                                translate.translateText(params2, (err2, data2) => {
+                                    if (err2) {
+                                        cadena += `${i.Emotions[0].Type}`;
+                                    } else {
+                                        cadena += `${data2.TranslatedText}`;
+                                    }
+                                })
+                            });
+
+                            uploadPhotoprofile(newData).then(async(url_photo) => {
+                                //insertar foto
+                                con.query(`CALL updateFoto1('${url_photo}', '${cadena}', ${iduser},'${usuario}','${username}','${nombre}');`, function(err, resUF) {
+                                    if (err) { console.log(err); return res.jsonp({ Res: false }) }
+                                    return res.jsonp({ Res: true })
+                                })
+                            })
+                        })
+                    })
                 }
+
+
+
+            } else {
+                res.jsonp({ Res: false })
             }
+
         });
 
-    } catch (error) {
-        console.log(error)
-        res.jsonp({ Res: false })
+    } catch (err) {
+        return res.jsonp({ res: false })
     }
+
+
 }
 
 
