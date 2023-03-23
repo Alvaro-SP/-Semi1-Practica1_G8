@@ -32,10 +32,11 @@ export class DetalleFotoComponent implements OnInit {
       })
       this.router.navigate(['login'])
     } else {
-      this.backend.getInfo(sessionStorage.getItem("usuario")).subscribe(
-        res => {
-          var js = JSON.stringify(res)
-          if (js.includes("Res")) {
+      let id=this.ruta.snapshot.params['id']
+      this.backend.detalleFoto(id).subscribe(
+        res=>{
+          var js=JSON.stringify(res)
+          if(js.includes("Res")){
             Swal.fire({
               icon: 'error',
               title: 'Oops...',
@@ -43,15 +44,15 @@ export class DetalleFotoComponent implements OnInit {
             })
             sessionStorage.removeItem("usuario")
             this.router.navigate(['login'])
-          } else {
-            var data = JSON.parse(js)
+          }else{
+            var data=JSON.parse(js)
             this.cuerpo.Id = data.Id
             this.cuerpo.Nombre = data.Nombre
             this.cuerpo.Foto = data.Foto
             this.cuerpo.Descripcion = data.Descripcion
           }
         },
-        err => {
+        err=>{
           Swal.fire({
             icon: 'error',
             title: 'Oops...',
@@ -88,10 +89,7 @@ export class DetalleFotoComponent implements OnInit {
           this.router.navigate(['verFotos'])
         } else {
           let data = JSON.parse(js)
-          this.cuerpo.Id = data.Id
-          this.cuerpo.Nombre = data.Nombre
-          this.cuerpo.Foto = data.Foto
-          this.cuerpo.Descripcion = data.Descripcion
+          this.Traduccion=data.Traduccion
         }
       },
       err => {

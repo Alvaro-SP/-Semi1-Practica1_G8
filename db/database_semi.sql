@@ -19,6 +19,7 @@ CREATE TABLE usuario
     `name`        VARCHAR(100) NOT NULL,
     `password`    VARCHAR(50)  NOT NULL,
     `description` TEXT         NOT NULL,
+    `photo`       VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`)
 );
 
@@ -85,7 +86,8 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS RegistroUsuario;
 DELIMITER $$
-CREATE PROCEDURE RegistroUsuario(usernamev VARCHAR(45), namev VARCHAR(100), passwordv VARCHAR(50), descriptionv TEXT, urlv VARCHAR(150))
+CREATE PROCEDURE RegistroUsuario(usernamev VARCHAR(45), namev VARCHAR(100), passwordv VARCHAR(50), descriptionv TEXT,
+                                 urlv VARCHAR(150))
 BEGIN
     DECLARE idUser INT;
     DECLARE idAlbum INT;
@@ -93,7 +95,8 @@ BEGIN
 
     -- Ingreso de usuario
     IF NOT EXISTS(SELECT 1 FROM usuario WHERE username = usernamev) THEN
-        INSERT INTO usuario (username, name, password, description) VALUES (usernamev, namev, passwordv, descriptionv);
+        INSERT INTO usuario (username, name, password, description, photo)
+        VALUES (usernamev, namev, passwordv, descriptionv, urlv);
     END IF;
     -- Id usuario
     SELECT id INTO idUser FROM usuario WHERE username = usernamev;
