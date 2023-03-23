@@ -38,7 +38,6 @@ export class SubirFotoComponent implements OnInit {
 
   cuerpo: any = {
     Foto: '',
-    Album: '',
     Descripcion:'',
     Lastusuario: sessionStorage.getItem("usuario")
   }

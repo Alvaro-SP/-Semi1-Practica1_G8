@@ -14,60 +14,29 @@
         <div class="col">
             <div class="mx-auto" style="width: 80%">
                 <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label" style="color: white">Usuario</label
-          >
+                    <label for="exampleFormControlInput1" class="form-label" style="color: white">Usuario</label>
 
-          <input
-            type="text"
-            class="form-control"
-            id="exampleFormControlInput1"
-            [(ngModel)]="this.cuerpo.Usuario"
-            [ngModelOptions]="{ standalone: true }"
-            [disabled]="true"
-          />
+                    <input type="text" class="form-control" id="exampleFormControlInput1" [(ngModel)]="this.cuerpo.Usuario" [ngModelOptions]="{ standalone: true }" [disabled]="true" />
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label" style="color: white">Nombre Completo</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput1" [(ngModel)]="this.cuerpo.Nombre" [ngModelOptions]="{ standalone: true }" [disabled]="true" />
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlInput5" class="form-label" style="color: white">Descripcion</label>
+                    <input type="text" class="form-control" id="exampleFormControlInput5" [(ngModel)]="this.cuerpo.Descripcion" [ngModelOptions]="{ standalone: true }" [disabled]="true" />
+                </div>
+            </div>
+
         </div>
-        <div class="mb-3">
-          <label
-            for="exampleFormControlInput1"
-            class="form-label"
-            style="color: white"
-            >Nombre Completo</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            id="exampleFormControlInput1"
-            [(ngModel)]="this.cuerpo.Nombre"
-            [ngModelOptions]="{ standalone: true }"
-            [disabled]="true"
-          />
+        <div class="col">
+            <div class="snapshot">
+                <h4 style="color: white">Tu foto</h4>
+                <img [src]="this.cuerpo.Foto" [height]="300" [width]="300" />
+            </div>
         </div>
-      </div>
-      <div class="mb-3">
-        <label
-          for="exampleFormControlInput5"
-          class="form-label"
-          style="color: white"
-          >Descripcion</label
-        >
-        <input
-          type="text"
-          class="form-control"
-          id="exampleFormControlInput5"
-          [(ngModel)]="this.cuerpo.Descripcion"
-          [ngModelOptions]="{ standalone: true }"
-          [disabled]="true"
-        />
-      </div>
-    </div>
-    <div class="col">
-      <div class="snapshot">
-        <h4 style="color: white">Tu foto</h4>
-        <img [src]="this.cuerpo.Foto" [height]="300" [width]="300" />
-      </div>
+        <br />
     </div>
     <br />
-  </div>
-  <br />
-  <br />
+    <br />
 </div>
