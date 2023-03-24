@@ -41,7 +41,111 @@
         <button class="btn btn-danger" type="submit" (click)="CerrarSesion()">
           Cerrar Sesion
         </button>
+    </form>
+  </div>
+</div>
+</nav>
+
+<div class="chat-widget-wrapper">
+  <div class="chat-widget-container"  (click)="toggleChat()" >
+    <div class="chat-widget-text" *ngIf="!chatOpen"    >
+      <p class="heading">TILIN BOT</p>
+      <p>Hola, puedo ayudar?.</p>
+    </div>
+    <div class="chat-widget-avatar"   (click)="toggleChat()" >
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Bot_Sleep.svg/1024px-Bot_Sleep.svg.png" alt="" height="70px"  (click)="toggleChat()" />
+    </div>
+  </div>
+  <div class="chat-box-container">
+    <div class="chat-box-nav">
+    </div>
+    <div class="chat-box-content">
+      <form action="" class="chat-box-form">
+        
+>>>>>>> Stashed changes
       </form>
     </div>
   </div>
-</nav>
+</div>
+
+<div id="container"  *ngIf="chatOpen">
+
+	<main>
+
+		<ul id="chat">
+      <!--! ENLISTAR MENSAJES -->
+			<li class="you">
+				<div class="entete">
+					<span class="status green"></span>
+					<h2>Vincent</h2>
+					<h3>10:12AM, Today</h3>
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+				</div>
+			</li>
+			<li class="me">
+				<div class="entete">
+					<h3>10:12AM, Today</h3>
+					<h2>Vincent</h2>
+					<span class="status blue"></span>
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+				</div>
+			</li>
+			<li class="me">
+				<div class="entete">
+					<h3>10:12AM, Today</h3>
+					<h2>Vincent</h2>
+					<span class="status blue"></span>
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					OK
+				</div>
+			</li>
+			<li class="you">
+				<div class="entete">
+					<span class="status green"></span>
+					<h2>Vincent</h2>
+					<h3>10:12AM, Today</h3>
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+				</div>
+			</li>
+			<li class="me">
+				<div class="entete">
+					<h3>10:12AM, Today</h3>
+					<h2>Vincent</h2>
+					<span class="status blue"></span>
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+				</div>
+			</li>
+			<li class="me">
+				<div class="entete">
+					<h3>10:12AM, Today</h3>
+					<h2>Vincent</h2>
+					<span class="status blue"></span>
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					OK
+				</div>
+			</li>
+		</ul>
+		<footer>
+			<textarea placeholder="Type your message"></textarea>
+			<!-- <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_picture.png" alt="">
+			<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_file.png" alt=""> -->
+			<a href="#">Send</a>
+		</footer>
+	</main>
+</div>
