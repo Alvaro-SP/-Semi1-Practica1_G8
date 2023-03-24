@@ -7,6 +7,8 @@ import { VerFotosComponent } from './components/ver-fotos/ver-fotos.component';
 import { EditarPerfilComponent } from './components/editar-perfil/editar-perfil.component';
 import { SubirFotoComponent } from './components/subir-foto/subir-foto.component';
 import { DetalleFotoComponent } from './components/detalle-foto/detalle-foto.component';
+import { ExtraerTxtComponent } from './components/extraer-txt/extraer-txt.component';
+
 //import { CrearAlbumComponent } from './components/crear-album/crear-album.component';
 //import { EditarAlbumsComponent } from './components/editar-albums/editar-albums.component';
 
@@ -43,7 +45,12 @@ const routes: Routes = [
   {
     path:'detalleFoto/:id',
     component: DetalleFotoComponent
-  }
+  },
+  {
+    path:'extraer-txt',
+    component: ExtraerTxtComponent
+  },
+
 ];
 
 @NgModule({
