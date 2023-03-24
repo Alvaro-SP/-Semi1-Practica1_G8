@@ -60,4 +60,12 @@ export class BackendService {
   obtTxt(cuerpo:any){
     return this.http.post(`${this.URL}/obtTxt`, cuerpo);
   }
+
+  sendmessage(cuerpo:any){
+    return this.http.post(`${this.URL}/sendmessage`, cuerpo);
+  }
+
+  chatbotmsg(id:any){
+    return this.http.get(`${this.URL}/chatbotmsg/${id}`);
+  }
 }
