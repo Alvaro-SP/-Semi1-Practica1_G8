@@ -51,8 +51,8 @@ export class ExtraerTxtComponent implements OnInit {
 
   Registrar() {
     let auxArr = this.foto.split(",", 2)
-    this.foto = auxArr[1]
-    this.cuerpo.Foto = this.foto;
+    this.cuerpo.Foto = auxArr[1]
+
     this.backend.obtTxt(this.cuerpo).subscribe(
       res => {
         const resp = JSON.parse(JSON.stringify(res))
