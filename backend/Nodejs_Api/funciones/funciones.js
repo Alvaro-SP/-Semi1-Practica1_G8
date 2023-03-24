@@ -3,7 +3,7 @@ import { con } from './dbconnection.js'
 import axios from 'axios'
 import { uploadPhotoprofile, uploadPhotopic } from './s3conn.js'
 import md5 from 'blueimp-md5'
-
+import { postchatbot } from './botconn.js'
 import fs from 'fs'
 
 
@@ -605,5 +605,53 @@ const obtTxt = async(req, res) => {
         }
     });
 }
+var dict = {};
 
-export { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser, detalleFotoId, traductor, obtTxt }
+const sendmessagebot = async (req, res) => {
+    const message = req.body.message;
+    const id = req.body.id;
+    if(dict[id] == undefined){
+        dict[id] = []
+        dict[id].push({
+            message: message,
+            bot: false
+          })
+    }
+    console.log(message)
+    try {
+        //console.log("-------------")
+        //console.log(postchatbot(message))
+
+        postchatbot(message).then( (answer) => {
+            console.log(answer)
+            dict[id].push({
+                message: answer,
+                bot: true
+              })
+            res.jsonp(answer)
+        },
+        (error) => {
+            console.log(error)
+            res.jsonp({ Res: false })
+        })
+    } catch (error) {
+        console.log(error)
+        res.jsonp({ Res: false })
+    }
+}
+
+
+
+const getbotresponse = async (req, res) => {
+    let iduser = req.params.id
+    try {
+        console.log(dict[iduser])
+        res.jsonp(dict[iduser])
+    } catch (error) {
+        console.log(error)
+        res.jsonp({ Res: false })
+    }
+}
+
+
+export { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser, detalleFotoId, traductor, obtTxt ,sendmessagebot, getbotresponse  }
