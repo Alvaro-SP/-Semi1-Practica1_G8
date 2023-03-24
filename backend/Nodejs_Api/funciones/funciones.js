@@ -15,6 +15,8 @@ var rekognition = new AWS.Rekognition({
     secretAccessKey: '4HSTR7voa3xq7VIZ9LsrrhpJEAeVCjCFqizcL2B+'
 })
 
+
+
 const login = async(req, res) => {
 
 
@@ -487,8 +489,18 @@ order by a.name_album;`
     }
 }
 
+var dict = {};
+
 const sendmessagebot = async (req, res) => {
     const message = req.body.message;
+    const id = req.body.id;
+    if(dict[id] == undefined){
+        dict[id] = []
+        dict[id].push({
+            message: message,
+            bot: false
+          })
+    }
     console.log(message)
     try {
         //console.log("-------------")
@@ -496,6 +508,10 @@ const sendmessagebot = async (req, res) => {
 
         postchatbot(message).then( (answer) => {
             console.log(answer)
+            dict[id].push({
+                message: answer,
+                bot: true
+              })
             res.jsonp(answer)
         },
         (error) => {
@@ -507,9 +523,13 @@ const sendmessagebot = async (req, res) => {
         res.jsonp({ Res: false })
     }
 }
-const getbotresponse = async (req, res) => {
-    try {
 
+
+
+const getbotresponse = async (req, res) => {
+    iduser = req.params.id
+    try {
+        res.jsonp(dict[iduser])
     } catch (error) {
         console.log(error)
         res.jsonp({ Res: false })

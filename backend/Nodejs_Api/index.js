@@ -56,7 +56,7 @@ app.delete('/eliminaAlbum/:username/:nameAlbum', jsonParser, (req, res) => delet
 
 app.get('/verFotos/:usuario', jsonParser, (req, res) => getFotosUser(req, res));
 
-app.get('/chatbotmsg', jsonParser,(req, res) => getbotresponse(req, res));
+app.get('/chatbotmsg/:id', jsonParser,(req, res) => getbotresponse(req, res));
 
 app.post('/sendmessage', jsonParser,(req, res) => sendmessagebot(req, res));
 
