@@ -1,0 +1,9 @@
+version: "3"
+services:
+
+  backendp2:
+    container_name: backendp2
+    image: doned/apinodesemi1:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
