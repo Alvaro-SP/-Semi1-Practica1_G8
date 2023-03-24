@@ -3,22 +3,23 @@ import AWS from'aws-sdk'
 
 AWS.config.update({
     region: 'us-east-1', // La región donde se creo el bot
-    accessKeyId: 'AKIA2R37HQXTCPY4WGSF',
-    secretAccessKey: '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'
+    accessKeyId: 'AKIARHSIZASZYK6DQ5EY',
+    secretAccessKey: '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'
 });
 
-const lexruntime = new AWS.LexRuntime();
+const lexruntime = new AWS.LexRuntimeV2();
 
 const postchatbot = async (message) => {
     try {
         const params = {
-            botAlias: 'aliasbotsemi',
-            botName: 'chatbotg8semi',
-            inputText: message,
-            userId: '123456789',
+            botAliasId: 'BRINKTKLPE',
+            localeId: 'es_419',
+            text: message,
+            botId: 'MAQQSYQLV7',
+            sessionId: '123456789',
         };
 
-        lexruntime.postText(params, (err, data) => {
+        lexruntime.recognizeText(params, (err, data) => {
             if (err) {
                 console.log(err, err.stack);
                 return { Res: false };
