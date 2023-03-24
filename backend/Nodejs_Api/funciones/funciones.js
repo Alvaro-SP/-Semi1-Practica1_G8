@@ -491,7 +491,17 @@ const sendmessagebot = async (req, res) => {
     const message = req.body.message;
     console.log(message)
     try {
-        res.jsonp(postchatbot(message))
+        //console.log("-------------")
+        //console.log(postchatbot(message))
+
+        postchatbot(message).then( (answer) => {
+            console.log(answer)
+            res.jsonp(answer)
+        },
+        (error) => {
+            console.log(error)
+            res.jsonp({ Res: false })
+        })
     } catch (error) {
         console.log(error)
         res.jsonp({ Res: false })
