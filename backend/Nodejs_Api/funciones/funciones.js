@@ -605,12 +605,12 @@ const obtTxt = async(req, res) => {
         }
     });
 }
-var dict = {};
+var dict ={};
 
 const sendmessagebot = async (req, res) => {
     const message = req.body.message;
     const id = req.body.id;
-    
+    console.log(id)
     if(dict[id] == undefined){
         dict[id] = []
     }
@@ -630,9 +630,9 @@ const sendmessagebot = async (req, res) => {
                 bot: true
             })
             
-            // console.log(answer)
-            // console.log(dict[id])
-            res.jsonp(answer)
+            console.log(answer)
+            console.log(dict[id])
+            res.jsonp(dict[id])
         },
         (error) => {
             console.log(error)
@@ -649,13 +649,11 @@ const sendmessagebot = async (req, res) => {
 const getbotresponse = async (req, res) => {
     let iduser = req.params.id
     try {
-        console.log(dict[iduser])
         res.jsonp(dict[iduser])
     } catch (error) {
         console.log(error)
-        res.jsonp({ Res: false })
-    }
+        res.jsonp({ Res: false })
+    }
 }
-
 
 export { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser, detalleFotoId, traductor, obtTxt ,sendmessagebot, getbotresponse  }

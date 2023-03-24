@@ -26,7 +26,17 @@ export class MenuComponent implements OnInit {
   toggleChat() {
     this.chatOpen = !this.chatOpen;
   }
-  constructor(private backend: BackendService,private router: Router) { }
+  constructor(private backend: BackendService,private router: Router) {
+    console.log(this.cuerpo.id)
+    this.backend.chatbotmsg(this.cuerpo.id).subscribe(
+      res => {
+        const resp = JSON.parse(JSON.stringify(res))
+          this.items = resp;
+          console.log(this.items)
+      }
+    )
+
+  }
 
   ngOnInit(): void {
   }
@@ -48,20 +58,6 @@ export class MenuComponent implements OnInit {
     this.backend.sendmessage(this.cuerpo).subscribe(
       res => {
         const resp = JSON.parse(JSON.stringify(res))
-
-      },
-      err => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Ocurrio un error!',
-        })
-      }
-    )
-    console.log(this.cuerpo.id)
-    this.backend.chatbotmsg(this.cuerpo.id).subscribe(
-      res => {
-        const resp = JSON.parse(JSON.stringify(res))
         if (resp) {
           this.items = resp;
           console.log(this.items)
@@ -73,9 +69,18 @@ export class MenuComponent implements OnInit {
           })
           this.cuerpo.message = ""
         }
+      },
+      err => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Ocurrio un error!',
+        })
       }
     )
-      console.log(this.items)
+    console.log(this.cuerpo.id)
+    
+    console.log(this.items)
 
   }
 
