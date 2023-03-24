@@ -18,6 +18,8 @@ import { CrearAlbumComponent } from './components/crear-album/crear-album.compon
 import { EditarAlbumsComponent } from './components/editar-albums/editar-albums.component';
 import { CommonModule } from '@angular/common';
 import { DetalleFotoComponent } from './components/detalle-foto/detalle-foto.component';
+import { ExtraerTxtComponent } from './components/extraer-txt/extraer-txt.component';
+
 
 @NgModule({
   declarations: [
@@ -33,7 +35,8 @@ import { DetalleFotoComponent } from './components/detalle-foto/detalle-foto.com
     SubirFotoComponent,
     CrearAlbumComponent,
     EditarAlbumsComponent,
-    DetalleFotoComponent
+    DetalleFotoComponent,
+    ExtraerTxtComponent
   ],
   imports: [
     BrowserModule,

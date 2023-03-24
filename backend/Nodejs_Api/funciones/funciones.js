@@ -586,4 +586,24 @@ const traductor = async(req, res) => {
     })
 }
 
-export { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser, detalleFotoId, traductor }
+const obtTxt = async(req, res) => {
+
+    const params = {
+        Image: {
+            Bytes: Buffer.from(req.body.Foto, 'base64')
+        }
+    };
+    rekognition.detectText(params, function(err, data) {
+        if (err) {
+          console.log(err, err.stack);
+        } else {
+          var cadena = ""
+          data.TextDetections.forEach(element => {
+            cadena += element.DetectedText + "\n";
+          });
+          return res.jsonp({ texto: cadena })
+        }
+    });
+}
+
+export { test, login, Registrar, infouser, actualizaInfo, uploadfoto, crearAlbum, getAlbumsUser, changeAlbums, getFotosAlbum, deleteAlbum, getFotosUser, detalleFotoId, traductor, obtTxt }
