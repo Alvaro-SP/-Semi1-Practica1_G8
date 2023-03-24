@@ -61,8 +61,7 @@
     </div>
     <div class="chat-box-content">
       <form action="" class="chat-box-form">
-        
->>>>>>> Stashed changes
+
       </form>
     </div>
   </div>
@@ -74,7 +73,20 @@
 
 		<ul id="chat">
       <!--! ENLISTAR MENSAJES -->
-			<li class="you">
+			<ng-container *ngFor="let msg of items">
+				<li [ngClass]="{'me': !msg.bot, 'you': msg.bot}">
+				<div class="entete">
+					<span class="status green"></span>
+					<h2>{{msg.bot ? 'Botsito' : 'Grupo 8'}}</h2>
+					<h3>{{msg.bot ? 'a few moments ago' : 'Now, Today'}}</h3>
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					{{msg.message}}
+				</div>
+				</li>
+			</ng-container>
+			<!-- <li class="you">
 				<div class="entete">
 					<span class="status green"></span>
 					<h2>Vincent</h2>
@@ -139,13 +151,16 @@
 				<div class="message">
 					OK
 				</div>
-			</li>
+			</li> -->
 		</ul>
 		<footer>
-			<textarea placeholder="Type your message"></textarea>
+			<textarea placeholder="Type your message"
+			[(ngModel)]="this.cuerpo.message"></textarea>
 			<!-- <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_picture.png" alt="">
 			<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_file.png" alt=""> -->
-			<a href="#">Send</a>
+			<a
+			(click)="Registrar()"
+			type="submit">Send</a>
 		</footer>
 	</main>
 </div>

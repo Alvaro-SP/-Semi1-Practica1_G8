@@ -610,24 +610,28 @@ var dict = {};
 const sendmessagebot = async (req, res) => {
     const message = req.body.message;
     const id = req.body.id;
+    
     if(dict[id] == undefined){
         dict[id] = []
-        dict[id].push({
-            message: message,
-            bot: false
-          })
     }
-    console.log(message)
+    dict[id].push({
+        message: message,
+        bot: false
+        })
+    
     try {
         //console.log("-------------")
         //console.log(postchatbot(message))
 
         postchatbot(message).then( (answer) => {
-            console.log(answer)
+            
             dict[id].push({
                 message: answer,
                 bot: true
-              })
+            })
+            
+            // console.log(answer)
+            // console.log(dict[id])
             res.jsonp(answer)
         },
         (error) => {
