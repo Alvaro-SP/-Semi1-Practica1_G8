@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 export class BackendService {
 
   constructor(private http: HttpClient) { }
-  URL: string = "http://BalanceadorSemi1P1-1838550676.us-east-2.elb.amazonaws.com"
+  URL: string = "http://3.17.81.208:8080"
 
   Login(cuerpo: any) {
     return this.http.post(`${this.URL}/login`, cuerpo);
@@ -47,5 +47,25 @@ export class BackendService {
 
   eliminaAlbum(usuario: any, namealbum: any) {
     return this.http.delete(`${this.URL}/eliminaAlbum/${usuario}/${namealbum}`);
+  }
+  
+  detalleFoto(id:any){
+    return this.http.get(`${this.URL}/detalleFoto/${id}`);
+  }
+
+  traducirDescripcion(cuerpo:any){
+    return this.http.post(`${this.URL}/traducir`, cuerpo);
+  }
+
+  obtTxt(cuerpo:any){
+    return this.http.post(`${this.URL}/obtTxt`, cuerpo);
+  }
+
+  sendmessage(cuerpo:any){
+    return this.http.post(`${this.URL}/sendmessage`, cuerpo);
+  }
+
+  chatbotmsg(id:any){
+    return this.http.get(`${this.URL}/chatbotmsg/${id}`);
   }
 }

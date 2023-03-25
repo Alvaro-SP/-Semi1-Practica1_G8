@@ -1,4 +1,4 @@
-# -Semi1-Practica1_G8
+# -Semi1-Practica2_G8
 
 <p>UNIVERSIDAD DE SAN CARLOS DE GUATEMALA</p>
 <p>FACULTAD DE INGENIERIA</p>
@@ -104,10 +104,13 @@ para alojar la base de datos MySQL que contiene los enlaces a las imágenes alma
 - Amazon EC2: 
 para ejecutar las instancias de la aplicación que se conectarán al balanceador de carga. La aplicación se puede empaquetar en un contenedor de Docker para una fácil implementación y escalabilidad.
 
-- Amazon ELB: 
-para distribuir la carga de tráfico entre las instancias de la aplicación. Amazon ELB proporciona un punto de entrada único para la aplicación y puede equilibrar la carga de manera inteligente en función de la carga actual de las instancias.
+- Amazon LEX:
+Para el servicio de Amazon Lex, la arquitectura utilizada en AWS se basa en una combinación de varios servicios. El núcleo de la arquitectura es el servicio de Amazon Lex en sí, que proporciona la capacidad de comprensión y procesamiento del lenguaje natural a través de la tecnología de aprendizaje automático.
 
-![a](assets/arq.png)
+- Amazon Rekognition:
+servicio de análisis de imágenes y video que utiliza la tecnología de aprendizaje profundo para detectar objetos, escenas y rostros, además de realizar análisis de contenido en imágenes y videos. La arquitectura utilizada en AWS para Amazon Rekognition se basa en una combinación de varios servicios, incluyendo Amazon S3 para almacenar y recuperar imágenes y videos, y Amazon DynamoDB para almacenar y consultar metadatos relacionados con el contenido.
+
+![a](assets/arq2.png)
 
 ## Configuraciones Principales
 Estas son algunas configuraciones necesarias para establecer la aplicacion web PhotoBucket que se ha realizado utilizando herramientas de AWS
@@ -147,7 +150,7 @@ Esperar a que se inicie la instancia y obtener su dirección IP pública o DNS.
 
 ![a](assets/insrun.jpg)
 
-Posteriormente con algun cliente SSH podemos acceder a las consolas e iniciar cada API
+Posteriormente con algun cliente SSH podemos acceder a la api
 
 ![a](assets/insrun2.jpg)
 
@@ -181,7 +184,7 @@ La columna "name_photo" representa el nombre de la foto, la columna "photo_link"
 
 Utilizado para almacenar  los usuarios, albumes y fotos.
 
-![a](assets/code1.png)
+![a](assets/db2.png)
 
 ### Configuracion de S3 Bucket para almacenar fotos
 - bucket con sus carpetas correspondientes.
@@ -192,25 +195,19 @@ Utilizado para almacenar  los usuarios, albumes y fotos.
 
 ![a](assets/buck2.png)
 
-### Configuracion de ELB Balanceador de Carga
-- primeros pasos configurando el ELB
+### Configuracion de ChatBot de Amazon Lex
+- primeros pasos configurando el Amazon Lex
 
-![a](assets/bl2.jpg)
+![a](assets/BOT1.png)
 
-- teniendo las EC2 creadas se crea la seguridad de grupos
+- teniendo el bot creado se procede a configurar el chat
 
-![a](assets/bl3.jpg)
+![a](assets/BOT2.png)
 
-![a](assets/bl4.jpg)
+![a](assets/BOT3.png)
+- se procede a configurar el chatbot para que pueda ser utilizado en la pagina web
 
-- Balanceador de carga configurado con seguridad de grupos y las instancias configuradas en 50%.
-
-![a](assets/bl1.jpg)
-
-- grupos de seguridad del Balanceador de carga
-
-![a](assets/conban.jpg)
-![a](assets/conban2.jpg)
+![a](assets/BOT4.png)
 ### Configuracion de S3 Bucket para Pagina web Estatica
 - Acceder a la consola de AWS con el usuario IAM con permisos de S3 e ir a dicha consola.
 
@@ -244,15 +241,15 @@ Utilizado para almacenar  los usuarios, albumes y fotos.
 
 - Vista de la pagina de login
   ![a](assets/i2.png)
-- Vista de la pagina de registro
+- Vista de la pagina de ver info
   ![a](assets/i3.png)
-- Vista de la pagina de albumes
+- Vista de la pagina de ver fotos
   ![a](assets/i4.png)
 - Vista de la pagina de subir fotos
   ![a](assets/i6.png)
 - Vista de la pagina de perfil
   ![a](assets/i7.png)
-- Vista de la pagina de editar perfil
+- Vista de la pagina de ChatBot
   ![a](assets/i8.png)
 - Vista de la pagina de editar album
   ![a](assets/i10.png)
@@ -267,12 +264,6 @@ Angular se utiliza para crear la interfaz de usuario de la aplicacion de FOTOS l
 
 ### NodeJS
 Se ha creado el servidor web de la aplicación
-
-### Golang
-
-Se creo el back-end de la aplicación para servir los endpoints necesarios para la app de fotos.
-
-
 
 ## Conclusiones
 

@@ -4,10 +4,10 @@
 <div [id]="'carouselExampleControls'+this.getNombre()" class="carousel slide" data-bs-ride="carousel">
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <img [src]="this.firsFoto" class="d-block w-75" style="margin: auto;">
+            <a [href]="'detalleFoto/'+this.firsFoto.id"> <img [src]="this.firsFoto.url" class="d-block w-75" style="margin: auto;"></a>
         </div>
         <div class="carousel-item" *ngFor="let ima of this.fotos;">
-            <img [src]="ima" class="d-block w-75" style="margin: auto;">
+            <a [href]="'detalleFoto/'+ima.id"><img [src]="ima.url" class="d-block w-75" style="margin: auto;"></a>
         </div>
     </div>
     <button class="carousel-control-prev" type="button" [attr.data-bs-target]="'#carouselExampleControls'+this.getNombre()" data-bs-slide="prev">

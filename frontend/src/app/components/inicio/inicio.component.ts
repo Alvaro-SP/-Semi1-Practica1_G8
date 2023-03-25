@@ -13,7 +13,8 @@ export class InicioComponent implements OnInit {
   cuerpo: any = {
     Usuario: '',
     Nombre: '',
-    Foto: ''
+    Foto: '',
+    Descripcion:''
   }
 
   constructor(private router: Router, private backend: BackendService) {
@@ -41,6 +42,7 @@ export class InicioComponent implements OnInit {
             this.cuerpo.Usuario = data.Usuario
             this.cuerpo.Nombre = data.Nombre
             this.cuerpo.Foto = data.Foto
+            this.cuerpo.Descripcion=data.Descripcion
           }
         },
         err => {

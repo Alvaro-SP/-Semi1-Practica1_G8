@@ -1,0 +1,79 @@
+<app-menu></app-menu>
+<div
+  style="
+    background-color: #3c464c;
+    margin: auto;
+    width: 85%;
+    height: auto;
+    margin-top: 5%;
+    margin-bottom: 5%;
+  "
+>
+    <div class="text-center">
+        <p class="fs-1" style="color: white">
+        <b>Extraer texto de imagen</b>
+        </p>
+    </div>
+
+    <br/>
+
+    <div class="col">
+        <div class="row imgArea">
+            <h5
+            for="exampleFormControlTextarea1"
+            class="form-label"
+            style="color: white;"
+            >Foto</h5>
+        </div>
+
+        <div class="row imgArea">
+            <input
+            type="file"
+            class="form-control"
+            id="inputGroupFile01"
+            accept="image/*"
+            #ImageInput
+            [(ngModel)]="img"
+            (change)="onImageUpload()"
+            />
+
+            <br />
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="imgArea">
+            <div class="snapshot" *ngIf="this.existsFoto">
+                <h2 class="titfoto">Tu foto</h2>
+                <img [src]="this.foto" [height]="250" [width]="300" />
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row txtArea">
+        <div *ngIf="this.existsTexto">
+            <h2 class="titfoto">Texto:</h2>
+            <textarea readonly class="textarea-style">{{texto}}</textarea>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col"></div>
+        <div class="col">
+        <div class="d-grid gap-2">
+            <button
+            type="submit"
+            class="bt btn-primary btn-lg"
+            style="background-color: #fc9c1c"
+            (click)="Registrar()"
+            >
+            Extraer
+            </button>
+        </div>
+        </div>
+        <div class="col"></div>
+    </div>
+
+  <br />
+  <br />
+</div>
